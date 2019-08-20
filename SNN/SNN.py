@@ -1,3 +1,13 @@
+"""
+L2 normalisation gives slower training so that line has been commented out
+Need to figure out why that's happening and if it is normal
+
+Need to figure out the loss function being used
+
+Batching the training
+"""
+
+
 import tensorflow as tf
 import numpy as np
 from tensorflow import keras
@@ -16,7 +26,7 @@ n_layers = 10
 n_classes = 10
 n_units = 30
 batch_size = 50
-epochs = 400
+epochs = 50
 
 data_size = 5000
 
@@ -46,6 +56,7 @@ for a in range(n_layers):
 	inputs = tf.concat([inputs, layer], 1, name='concatenation'+str(a))
 
 logits = tf.layers.dense(inputs, n_classes, None, name='output')
+# logits = tf.math.l2_normalize(output, axis=0)
 loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels))
 predictions = tf.nn.softmax(logits)
 
@@ -58,7 +69,7 @@ with tf.Session() as session:
 	for a in range(epochs):
 		_, l, p = session.run([optimizer, loss, predictions], feed_dict={original_input:X, labels:y_onehot})
 
-		if a%50==0:
+		if a%50==0 or 1:
 			print("Epoch:", a+1, "\tLoss:", l, "\tAccuracy:", accuracy(p, y_onehot))
 
 	test_p = session.run(predictions, feed_dict={original_input:x_test, labels:y_onehot_test})
