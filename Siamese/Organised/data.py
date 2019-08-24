@@ -121,5 +121,8 @@ def generate_data(data, test_pert, lenperpert, dim=978):
             # different
             pairs[0][i, :], pairs[1][i, :] = diff_pert(data, pert)
             targets[i] = 0
+            i += 1
+
+            # print(pert, num, i)
 
     return np.asarray(pairs), np.asarray(targets)
