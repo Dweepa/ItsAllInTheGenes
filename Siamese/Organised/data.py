@@ -115,14 +115,14 @@ def generate_data(data, test_pert, lenperpert, dim=978):
     i = 0
     for pert in test_pert:
         for num in range(lenperpert):
-            if (i >= batch_size()):
+            if (i >= batch_size):
                 break
             # same
             pairs[0][i, :], pairs[1][i, :] = same_pert(data, pert)
             targets[i] = 1
             i += 1
 
-            if (i >= batch_size()):
+            if (i >= batch_size):
                 break
 
             # different
