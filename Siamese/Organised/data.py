@@ -61,7 +61,7 @@ def get_training_data(data, pert2profiles, location_pert, batch_size):
     print(len(list_of_perturbagens))
     dim = 978
 
-    batch_perturbagens = rng.choice(list_of_perturbagens, size=(len(list_of_perturbagens) / 5,), replace=False)
+    batch_perturbagens = rng.choice(list_of_perturbagens, size=(batch_size,), replace=False)
 
     pairs = [np.zeros((batch_size, dim)) for i in range(2)]
 
@@ -106,23 +106,30 @@ def diff_pert(data, pert):
 
 
 def generate_data(data, test_pert, lenperpert, dim=978):
+
     batch_size = len(test_pert) * 2 * lenperpert
+    print("batch_size: ", batch_size)
     pairs = [np.zeros((batch_size, dim)) for i in range(2)]
 
     targets = np.zeros((batch_size,))
     i = 0
     for pert in test_pert:
         for num in range(lenperpert):
+            if (i >= batch_size()):
+                break
             # same
             pairs[0][i, :], pairs[1][i, :] = same_pert(data, pert)
             targets[i] = 1
             i += 1
+
+            if (i >= batch_size()):
+                break
 
             # different
             pairs[0][i, :], pairs[1][i, :] = diff_pert(data, pert)
             targets[i] = 0
             i += 1
 
-            # print(pert, num, i)
+            print(i, end=" ")
 
     return np.asarray(pairs), np.asarray(targets)
