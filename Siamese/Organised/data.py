@@ -63,12 +63,6 @@ def get_training_data(data, pert2profiles, location_pert, batch_size):
 
     batch_perturbagens = rng.choice(list_of_perturbagens, size=(len(list_of_perturbagens) / 5,), replace=False)
 
-    def Diff(li1, li2):
-        li_dif = [i for i in li1 + li2 if i not in li1 or i not in li2]
-        return li_dif
-
-    remaining_perturbagens = Diff(list_of_perturbagens, batch_perturbagens)
-
     pairs = [np.zeros((batch_size, dim)) for i in range(2)]
 
     targets = np.zeros((batch_size,))
@@ -88,6 +82,18 @@ def get_training_data(data, pert2profiles, location_pert, batch_size):
     return np.asarray(pairs), np.asarray(targets)
 
 
-def generate_similar_profiles():
-    lkj = 8
-    return lkj
+def train_and_test_perturbagens(list_of_perturbagens):
+    train = rng.choice(list_of_perturbagens, size=(len(list_of_perturbagens) * 4 // 5,), replace=False)
+
+    def Diff(li1, li2):
+        li_dif = [i for i in li1 + li2 if i not in li1 or i not in li2]
+        return li_dif
+
+    test = Diff(list_of_perturbagens, train)
+    return train, test
+
+
+def generate_data(data, test_pert, batch_size, dim=978):
+    pairs, targets = list()
+    for pert in test_pert:
+        pairs.append()
