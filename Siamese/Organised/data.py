@@ -83,17 +83,43 @@ def get_training_data(data, pert2profiles, location_pert, batch_size):
 
 
 def train_and_test_perturbagens(list_of_perturbagens):
+    rng = np.random
     train = rng.choice(list_of_perturbagens, size=(len(list_of_perturbagens) * 4 // 5,), replace=False)
 
     def Diff(li1, li2):
-        li_dif = [i for i in li1 + li2 if i not in li1 or i not in li2]
+        li_dif = [i for i in li1 if i not in li1 or i not in li2]
         return li_dif
 
     test = Diff(list_of_perturbagens, train)
     return train, test
 
 
-def generate_data(data, test_pert, batch_size, dim=978):
-    pairs, targets = list()
+def same_pert(data, pert):
+    samples = data[data.target == pert].iloc[:, 0:978].sample(2)
+    return np.asarray(samples.iloc[0, :]), np.asarray(samples.iloc[1, :])
+
+
+def diff_pert(data, pert):
+    same = data[data.target == pert].iloc[:, 0:978].sample(1)
+    diff = data[data.target != pert].iloc[:, 0:978].sample(1)
+    return np.asarray(same.iloc[0, :]), np.asarray(diff.iloc[0, :])
+
+
+def generate_data(data, test_pert, lenperpert, dim=978):
+    batch_size = len(test_pert) * 2 * lenperpert
+    pairs = [np.zeros((batch_size, dim)) for i in range(2)]
+
+    targets = np.zeros((batch_size,))
+    i = 0
     for pert in test_pert:
-        pairs.append()
+        for num in range(lenperpert):
+            # same
+            pairs[0][i, :], pairs[1][i, :] = same_pert(data, pert)
+            targets[i] = 1
+            i += 1
+
+            # different
+            pairs[0][i, :], pairs[1][i, :] = diff_pert(data, pert)
+            targets[i] = 0
+
+    return np.asarray(pairs), np.asarray(targets)
