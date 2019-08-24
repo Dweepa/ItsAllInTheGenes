@@ -36,7 +36,7 @@ def create_location_pert(data):
     print("creating location_pert")
     location_pert = dict()
     cnt = 0
-    for i in set(data.target.values):
+    for i in set(np.unique(data.target.values)):
         loc = np.where(data['target'] == i)[0][0]
         location_pert[i] = loc
         if (cnt % 100 == 0):
@@ -61,7 +61,14 @@ def get_training_data(data, pert2profiles, location_pert, batch_size):
     print(len(list_of_perturbagens))
     dim = 978
 
-    batch_perturbagens = rng.choice(list_of_perturbagens, size=(batch_size,), replace=False)
+    batch_perturbagens = rng.choice(list_of_perturbagens, size=(len(list_of_perturbagens) / 5,), replace=False)
+
+    def Diff(li1, li2):
+        li_dif = [i for i in li1 + li2 if i not in li1 or i not in li2]
+        return li_dif
+
+    remaining_perturbagens = Diff(list_of_perturbagens, batch_perturbagens)
+
     pairs = [np.zeros((batch_size, dim)) for i in range(2)]
 
     targets = np.zeros((batch_size,))
@@ -79,3 +86,8 @@ def get_training_data(data, pert2profiles, location_pert, batch_size):
         pairs[1][i, :] = data.iloc[location_pert[pert2] + idx_2, 0:978]
 
     return np.asarray(pairs), np.asarray(targets)
+
+
+def generate_similar_profiles():
+    lkj = 8
+    return lkj

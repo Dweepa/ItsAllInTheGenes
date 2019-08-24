@@ -32,18 +32,19 @@ jsonfile = "../../Data/sig-pert mapping.json"
 data, metadata = gctx2pd(gctxfile, jsonfile)
 print(data.head())
 
+# Obtain targets
 target = get_target_labels(data, metadata)
 print(len(target))
 
 data1 = data.transpose()
-data1['target'] = get_target_labels(data1, metadata)
+data1['target'] = target
 data = data1.sort_values('target')
 print(data.head())
 
 location_pert = create_location_pert(data)
-pert2profile = create_pert2profile(data)
+pert2profiles = create_pert2profile(data)
 
-X, y = get_training_data(data, pert2profiles, location_pert, 10)
+X, y = get_training_data(data, pert2profiles, location_pert, 1000)
 
 print(X.shape)
 
