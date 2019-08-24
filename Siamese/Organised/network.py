@@ -1,6 +1,6 @@
 import keras
 from keras.models import Sequential, Model
-from keras.layers import Dense, Activation, Dropout, Input
+from keras.layers import Dense, Activation, Dropout, Input, LeakyReLU
 from keras.layers.noise import AlphaDropout
 from keras.layers import Layer
 from tensorflow.python.keras import backend as K
@@ -16,6 +16,22 @@ def create_base_network(n_dense=6,
                    optimizer='adam',
                    num_classes=1,
                    max_words=978):
+    if (activation == "leaky"):
+        model = Sequential()
+        model.add(Dense(dense_units, input_shape=(max_words,),
+                        kernel_initializer=kernel_initializer))
+        model.add(LeakyReLU(alpha=0.3))
+        model.add(dropout(dropout_rate))
+
+        for i in range(n_dense - 2):
+            model.add(Dense(dense_units, kernel_initializer=kernel_initializer))
+            model.add(LeakyReLU(alpha=0.3))
+            model.add(dropout(dropout_rate))
+
+        model.add(Dense(dense_units, kernel_initializer=kernel_initializer))
+        model.add(Activation('selu'))
+        model.add(dropout(dropout_rate))
+        return model
 
     model = Sequential()
     model.add(Dense(dense_units, input_shape=(max_words,),
