@@ -8,14 +8,14 @@ from tensorflow.python.keras import backend as K
 
 # Creates 1 branch of the siamese network
 def create_base_network(n_dense=6,
-                   dense_units=16,
-                   activation='selu',
-                   dropout=AlphaDropout,
-                   dropout_rate=0.1,
-                   kernel_initializer='lecun_normal',
-                   optimizer='adam',
-                   num_classes=1,
-                   max_words=978):
+                        dense_units=16,
+                        activation='selu',
+                        dropout=AlphaDropout,
+                        dropout_rate=0.1,
+                        kernel_initializer='lecun_normal',
+                        optimizer='adam',
+                        num_classes=1,
+                        max_words=978):
     if (activation == "leaky"):
         model = Sequential()
         model.add(Dense(dense_units, input_shape=(max_words,),
@@ -23,14 +23,10 @@ def create_base_network(n_dense=6,
         model.add(LeakyReLU(alpha=0.3))
         model.add(dropout(dropout_rate))
 
-        for i in range(n_dense - 2):
+        for i in range(n_dense - 1):
             model.add(Dense(dense_units, kernel_initializer=kernel_initializer))
             model.add(LeakyReLU(alpha=0.3))
             model.add(dropout(dropout_rate))
-
-        model.add(Dense(dense_units, kernel_initializer=kernel_initializer))
-        model.add(Activation('selu'))
-        model.add(dropout(dropout_rate))
         return model
 
     model = Sequential()

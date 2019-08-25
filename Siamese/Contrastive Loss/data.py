@@ -106,7 +106,6 @@ def diff_pert(data, pert):
 
 
 def generate_data(data, test_pert, lenperpert, dim=978):
-
     batch_size = len(test_pert) * 2 * lenperpert
     print("batch_size: ", batch_size)
     pairs = [np.zeros((batch_size, dim)) for i in range(2)]

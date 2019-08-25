@@ -1,11 +1,11 @@
 # Import necessary libraries
-
 import keras
 from keras.models import Sequential, Model
 from keras.layers import Dense, Activation, Dropout, Input
 from keras.layers.noise import AlphaDropout
 from keras.layers import Layer
 from tensorflow.python.keras import backend as K
+import pickle
 
 # Import custom modules
 from network import *
@@ -30,23 +30,43 @@ gctxfile = "../../Data/Sig Annotated Level 5 Data.gctx"
 jsonfile = "../../Data/sig-pert mapping.json"
 
 data, metadata = gctx2pd(gctxfile, jsonfile)
-print(data.head())
+data.head()
 
 # Obtain targets
 target = get_target_labels(data, metadata)
 print(len(target))
 
+# Attach labels
 data1 = data.transpose()
 data1['target'] = target
 data = data1.sort_values('target')
-print(data.head())
+data.head()
 
+# Create the 2 dictionaries
 location_pert = create_location_pert(data)
+
 pert2profiles = create_pert2profile(data)
 
-X, y = get_training_data(data, pert2profiles, location_pert, 1000)
+train, test = train_and_test_perturbagens(np.unique(data.target))
 
-print(X.shape)
+X_train, y_train = generate_data(data, train, 2)
+X_test, y_test = generate_data(data, test, 2)
 
-# Fit data
-model.fit([X[0], X[1]], y, epochs=10, verbose=1)
+dbfile = open('X_train', 'ab')
+pickle.dump(X_train, dbfile)
+dbfile.close()
+
+dbfile = open('y_train', 'ab')
+pickle.dump(y_train, dbfile)
+dbfile.close()
+
+dbfile = open('X_test', 'ab')
+pickle.dump(X_test, dbfile)
+dbfile.close()
+
+dbfile = open('y_test', 'ab')
+pickle.dump(y_test, dbfile)
+dbfile.close()
+
+dbfile = open('X_train', 'rb')
+db = pickle.load(dbfile)
