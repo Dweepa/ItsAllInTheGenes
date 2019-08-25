@@ -40,15 +40,31 @@ print(len(target))
 data1 = data.transpose()
 data1['target'] = target
 data = data1.sort_values('target')
-data.head()
+
+dbfile = open('../../Data/full', 'ab')
+pickle.dump(data, dbfile)
+dbfile.close()
 
 # Create the 2 dictionaries
 location_pert = create_location_pert(data)
+dbfile = open('../../Data/location_pert', 'ab')
+pickle.dump(location_pert, dbfile)
+dbfile.close()
 
 pert2profiles = create_pert2profile(data)
+dbfile = open('../../Data/pert2profiles', 'ab')
+pickle.dump(pert2profiles, dbfile)
+dbfile.close()
 
 train, test = train_and_test_perturbagens(np.unique(data.target))
+dbfile = open('../../Data/train_perts', 'ab')
+pickle.dump(train, dbfile)
+dbfile.close()
 
+dbfile = open('../../Data/test_perts', 'ab')
+pickle.dump(test, dbfile)
+dbfile.close()
+'''
 X_train, y_train = generate_data(data, train, 2)
 X_test, y_test = generate_data(data, test, 2)
 
@@ -70,3 +86,4 @@ dbfile.close()
 
 dbfile = open('X_train', 'rb')
 db = pickle.load(dbfile)
+'''
