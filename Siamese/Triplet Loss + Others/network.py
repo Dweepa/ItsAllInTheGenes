@@ -4,6 +4,7 @@ from keras.layers import Dense, Activation, Dropout, Input, LeakyReLU, concatena
 from keras.layers.noise import AlphaDropout
 from keras.layers import Layer
 from tensorflow.python.keras import backend as K
+from sklearn.preprocessing import normalize
 
 
 # Creates 1 branch of the triplet network
@@ -57,22 +58,22 @@ def triplet_loss(y_true, y_pred, alpha=0.6):
     """
     print('y_pred.shape = ', y_pred)
 
-    total_lenght = y_pred.shape.as_list()[-1]
-    #     print('total_lenght=',  total_lenght)
-    #     total_lenght =12
+    total_length = y_pred.shape.as_list()[-1]
+    # print('total_length=',  total_length)
+    #     total_length =12
 
-    anchor = y_pred[:, 0:int(total_lenght * 1 / 3)]
-    positive = y_pred[:, int(total_lenght * 1 / 3):int(total_lenght * 2 / 3)]
-    negative = y_pred[:, int(total_lenght * 2 / 3):int(total_lenght * 3 / 3)]
+    anchor = y_pred[:, 0:int(total_length * 1 / 3)]
+    positive = y_pred[:, int(total_length * 1 / 3):int(total_length * 2 / 3)]
+    negative = y_pred[:, int(total_length * 2 / 3):int(total_length * 3 / 3)]
 
     # distance between the anchor and the positive
-    pos_dist = K.sum(K.square(anchor - positive), axis=1)
-
+    pos_dist = K.abs(K.sum(K.square(anchor - positive), axis=1))
+    print(pos_dist)
     # distance between the anchor and the negative
-    neg_dist = K.sum(K.square(anchor - negative), axis=1)
-
+    neg_dist = K.abs(K.sum(K.square(anchor - negative), axis=1))
+    print(neg_dist)
     # compute loss
-    basic_loss = pos_dist - neg_dist + alpha
+    basic_loss = pos_dist - (neg_dist + alpha)
     loss = K.maximum(basic_loss, 0.0)
 
     return loss
