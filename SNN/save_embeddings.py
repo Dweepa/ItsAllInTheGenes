@@ -20,7 +20,7 @@ def save_embeddings(X, y, filename):
         for a in range(len(X)):
             print(a)
             feed_dict={original_input:np.asarray(X[a:a+1])}
-            curr_embedding = session.run([norm_embeddings], feed_dict=feed_dict)[0]
+            curr_embedding = session.run([norm_embeddings], feed_dict=feed_dict)[0][0]
             print(curr_embedding)
             embeddings.append(list(curr_embedding)+list([y]))
         pickle.dump(embeddings, open(filename, 'wb'))
