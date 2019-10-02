@@ -1,81 +1,130 @@
-"""
-L2 normalisation gives slower training so that line has been commented out
-Need to figure out why that's happening and if it is normal
-
-Need to figure out the loss function being used
-
-Batching the training
-"""
-
-
+import sys
 import tensorflow as tf
 import numpy as np
 from tensorflow import keras
 from keras.datasets import mnist
+from sklearn.preprocessing import normalize
+import matplotlib.pyplot as plt
+import pandas as pd
+import pickle
+import math
+from sklearn.model_selection import train_test_split
+import os
 
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
-x_train = x_train.reshape(x_train.shape[0], 784)
-x_test = x_test.reshape(x_test.shape[0], 784)
-x_train = x_train.astype('float32')
-x_test = x_test.astype('float32')
-x_train /= 255
-x_test /= 255
+filename = sys.argv[1]
 
-input_size = 28*28
+print("Loaded Modules")
+print("Loading Data")
+data = pickle.load(open('../Data/full', 'rb'))
+print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
+
+X = data.loc[:, '780':'79716']
+y = list(data['target'])
+pert_dict = {}
+num = 0
+for a in range(len(y)):
+    if y[a] not in pert_dict.keys():
+        pert_dict[y[a]] = num
+        num+=1
+    y[a] = pert_dict[y[a]]
+
+X = X[:100]
+y = np.asarray(y[:100]).flatten()
+# y_small
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+input_size = 978
 n_layers = 10
-n_classes = 10
-n_units = 30
-batch_size = 50
-epochs = 50
+n_classes = 2170
+n_units = 12
+batch_size = 3000
+epochs = 20
+learning_rate = 0.005
 
-data_size = 5000
+embedding_length = 32
+number_of_samples = 300
+saving_multiple = 5
 
-def accuracy(predictions, labels):
-	return (100.0 * np.sum(np.argmax(predictions, 1) == np.argmax(labels, 1))/ predictions.shape[0])
+print("Creating tensorflow graph")
+tf.reset_default_graph()
 
-# X = np.random.rand(data_size, input_size)
-# y = np.random.randint(0, n_classes, [data_size])
-
-X = x_train[:data_size]
-y = y_train[:data_size]
-
-y_onehot = np.zeros([data_size, n_classes])
-y_onehot_test = np.zeros([len(y_test), n_classes])
-
-for a in range(data_size):
-	y_onehot[a][y[a]] = 1
-for a in range(len(y_test)):
-	y_onehot_test[a][y_test[a]] = 1
-
-inputs = tf.placeholder(tf.float32, [None, input_size])
+inputs = tf.placeholder(tf.float32, [None, input_size], name='gene_expression')
 original_input = inputs
-labels = tf.placeholder(tf.float32, [None, n_classes])
+labels = tf.placeholder(tf.int32, [None], name='labels')
 
 for a in range(n_layers):
-	layer = tf.layers.dense(inputs, n_units, 'selu', name='layer'+str(a))
-	inputs = tf.concat([inputs, layer], 1, name='concatenation'+str(a))
+    layer = tf.layers.dense(inputs, n_units, 'selu', name='layer'+str(a))
+    inputs = tf.concat([inputs, layer], 1, name='concatenation'+str(a))
 
-logits = tf.layers.dense(inputs, n_classes, None, name='output')
-# logits = tf.math.l2_normalize(output, axis=0)
-loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels))
-predictions = tf.nn.softmax(logits)
+embeddings = tf.layers.dense(inputs, embedding_length, None, name='embedding')
+norm_embeddings = tf.nn.l2_normalize(embeddings, axis=1, name='norm_embeddings')
 
-optimizer = tf.train.GradientDescentOptimizer(0.005).minimize(loss)
+# class_weights = tf.constant(normalize(np.random.rand(embedding_length, n_classes)), dtype=tf.float32,
+#                            name='class_weights')
 
+class_weights = tf.Variable(tf.random_normal([embedding_length, n_classes], stddev=0.35), name="class_weights")
+
+margin = tf.placeholder(tf.float32, name='margin')
+
+alpha_initial = tf.get_variable(dtype=tf.float32, initializer=tf.constant(np.random.rand(1), dtype='float32'), 
+                                name='alpha')
+alpha = tf.nn.relu(alpha_initial)
+
+cosines = tf.matmul(norm_embeddings, class_weights, name='cosines')
+onehot_label = tf.one_hot(labels, n_classes, name='labels_onehot')
+m_onehot = tf.math.multiply(margin, onehot_label, name='mxonehot')
+margin_cosine = tf.subtract(cosines, m_onehot, name='cosine-m')
+alpha_margin_cosine = tf.math.exp(tf.math.multiply(alpha, margin_cosine), name='alphaxc-m')
+amc_numerator = tf.reduce_sum(tf.multiply(alpha_margin_cosine, onehot_label), axis=1, name='amc_positive')
+amc_denominator = tf.reduce_sum(alpha_margin_cosine, axis=1, name='amc_total')
+amc_fraction = tf.divide(amc_numerator, amc_denominator, name='amc_fraction')
+log_amcf = -tf.log(amc_fraction, name='log_amc')
+loss = tf.reduce_sum(log_amcf, name='loss')
+
+m = 0
+m_change = 0.00002
+m_max = 25
+
+optimizer = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+
+print("Graph generated")
+saver = tf.train.Saver(max_to_keep=2)
 with tf.Session() as session:
-	tf.initialize_all_variables().run()
-	print("Initialized")
-
-	for a in range(epochs):
-		_, l, p = session.run([optimizer, loss, predictions], feed_dict={original_input:X, labels:y_onehot})
-
-		if a%50==0 or 1:
-			print("Epoch:", a+1, "\tLoss:", l, "\tAccuracy:", accuracy(p, y_onehot))
-
-	test_p = session.run(predictions, feed_dict={original_input:x_test, labels:y_onehot_test})
-
-	print("Test Accuracy: ", accuracy(test_p, y_onehot_test))
-
-	
-	tf.summary.FileWriter('./logs', session.graph)
-	# print("Output: ", res)
+    feed_dict={original_input:np.random.rand(number_of_samples, input_size),
+                                     labels: np.random.randint(0, n_classes, number_of_samples),
+                                      margin: m}
+    
+    feed_dict={original_input:X, labels: y, margin: m}
+    
+    
+    alpha_initial.initializer.run()
+    tf.initialize_all_variables().run()
+    print("Initialized")
+    
+    total = np.asarray(session.run([original_input], feed_dict=feed_dict)).shape[1]
+    order = np.arange(total)
+    losses = []
+    for a in range(epochs):
+        np.random.shuffle(order)
+        total_loss = 0
+        sys.stdout.write("\rEpoch %d: \t[%s%s] %d/%d Loss: %f" % (a, "="*0, ' '*(50), 0, total, 0))
+            
+        for ind in range(0, total, batch_size):
+            sys.stdout.flush()
+            perc = math.ceil(50*(ind/total))
+            feed_dict[original_input] = X.iloc[order[ind:ind+batch_size]]
+            feed_dict[labels] = [y[a] for a in order[ind:ind+batch_size]]
+            _, l = session.run([optimizer, loss], feed_dict=feed_dict)
+            sys.stdout.write("\rEpoch %d: \t[%s%s] %d/%d Loss: %f" % (a, "="*perc, ' '*(50-perc), ind, total, total_loss/(ind+batch_size)))
+            total_loss+=(l)
+            
+        sys.stdout.write("\rEpoch %d: \t[%s] %d/%d Loss: %f\n" % (a, "="*50, total, total, total_loss/total))
+        losses.append(total_loss/total)
+        feed_dict[margin] = min(feed_dict[margin]+m_change, m_max)
+    
+    # tf.summary.FileWriter('./logs', session.graph)
+        if a%saving_multiple==0:
+            saver.save(session, './models/'+filename+'/'+filename, global_step=a)
+    saver.save(session, './models/'+filename+'/'+filename, global_step=epochs)
+os.rename('./models/'+filename+'/'+filename+'-'+str(epochs)+'.meta', './models/'+filename+'/'+filename+'.meta')
