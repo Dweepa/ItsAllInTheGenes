@@ -23,7 +23,7 @@ def save_embeddings(X, y, filename):
             curr_embedding = session.run([norm_embeddings], feed_dict=feed_dict)[0][0]
             embeddings.append(list(curr_embedding)+list([y[a]]))
         embeddings = pd.DataFrame(embeddings, columns=['e'+str(a) for a in range(1, 33)]+['target'])
-        sys.stdout.write("\r%d/%d\nCompleted\n" % (a, len(X)))
+        sys.stdout.write("\r%d/%d\nCompleted\n" % (len(X), len(X)))
         pickle.dump(embeddings, open(filename, 'wb'))
 
 print("Loaded Modules")
@@ -31,7 +31,7 @@ print("Loading Data")
 data = pickle.load(open('../Data/full', 'rb'))
 print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
 
-X = data.loc[:, '780':'79716'][:10]
-y = list(data['target'])[:10]
+X = data.loc[:, '780':'79716']
+y = list(data['target'])
 
 save_embeddings(X, y, './embeddings/'+embeddingname)
