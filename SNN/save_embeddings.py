@@ -8,6 +8,7 @@ modelname = sys.argv[1]
 embeddingname = sys.argv[2]
 
 def save_embeddings(X, y, filename):
+    embeddings = pd.DataFrame([], columns=['e'+str(a) for a in range(1, 33)]+['target'])
     with tf.Session() as session:
         saver = tf.train.import_meta_graph('./models/'+modelname+'/'+modelname+'.meta')
         saver.restore(session,tf.train.latest_checkpoint('./models/'+modelname))
@@ -16,10 +17,9 @@ def save_embeddings(X, y, filename):
         norm_embeddings = graph.get_tensor_by_name('norm_embeddings:0')
         print(original_input)
         print("Loaded")
-        feed_dict={original_input:np.asarray(X)}
-        embeddings = pd.DataFrame(session.run([norm_embeddings], feed_dict=feed_dict)[0],
-                                  columns=['e'+str(a) for a in range(1, 33)])
-        embeddings['target'] = y
+        for a in range(len(X)):
+            feed_dict={original_input:np.asarray(X[a:a+1])}
+            embeddings.append(session.run([norm_embeddings], feed_dict=feed_dict)[0]+[y])
         pickle.dump(embeddings, open(filename, 'wb'))
 
 print("Loaded Modules")
@@ -27,7 +27,7 @@ print("Loading Data")
 data = pickle.load(open('../Data/full', 'rb'))
 print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
 
-X = data.loc[:, '780':'79716'][:10000]
-y = list(data['target'])[:10000]
+X = data.loc[:, '780':'79716'][:10]
+y = list(data['target'])[:10]
 
 save_embeddings(X, y, './embeddings/'+embeddingname)
