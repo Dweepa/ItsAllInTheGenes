@@ -8,7 +8,7 @@ modelname = sys.argv[1]
 embeddingname = sys.argv[2]
 
 def save_embeddings(X, y, filename):
-    embeddings = pd.DataFrame([], columns=['e'+str(a) for a in range(1, 33)]+['target'])
+    embeddings = []
     with tf.Session() as session:
         saver = tf.train.import_meta_graph('./models/'+modelname+'/'+modelname+'.meta')
         saver.restore(session,tf.train.latest_checkpoint('./models/'+modelname))
@@ -21,8 +21,8 @@ def save_embeddings(X, y, filename):
             print(a)
             feed_dict={original_input:np.asarray(X[a:a+1])}
             curr_embedding = session.run([norm_embeddings], feed_dict=feed_dict)[0][0]
-            print(curr_embedding)
             embeddings.append(list(curr_embedding)+list([y]))
+        embeddings = pd.DataFrame(embeddings, columns=['e'+str(a) for a in range(1, 33)]+['target'])
         pickle.dump(embeddings, open(filename, 'wb'))
 
 print("Loaded Modules")
