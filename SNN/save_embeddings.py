@@ -19,7 +19,7 @@ def save_embeddings(X, y, filename):
         print("Loaded")
         for a in range(len(X)):
             feed_dict={original_input:np.asarray(X[a:a+1])}
-            embeddings.append(list(session.run([norm_embeddings], feed_dict=feed_dict)[0])+list([y])
+            embeddings.append(list(session.run([norm_embeddings], feed_dict=feed_dict)[0])+list([y]))
         pickle.dump(embeddings, open(filename, 'wb'))
 
 print("Loaded Modules")
