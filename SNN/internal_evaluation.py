@@ -102,10 +102,10 @@ for a in imp_q:
 all_outputs['median'] = []
 all_outputs['auc'] = []
 
-test_cases = 100
+test_cases = 10000
 for a in range(test_cases):
 	sys.stdout.write("\r%d/%d" % (a, test_cases))
-	X_small, y_small = get_set(20)
+	X_small, y_small = get_set(200)
 	ind = np.random.choice(len(y_small), 1)
 	imp_q_val = full_internal_evaluation(X_small[ind], y_small[ind], X_small, y_small, printinfo=False)
 	for key in imp_q_val.keys():
