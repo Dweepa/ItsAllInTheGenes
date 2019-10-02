@@ -35,9 +35,9 @@ y = np.asarray(y[:100]).flatten()
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 input_size = 978
-n_layers = 10
+n_layers = 16
 n_classes = 2170
-n_units = 12
+n_units = 21
 batch_size = 3000
 epochs = 20
 learning_rate = 0.005
