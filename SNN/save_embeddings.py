@@ -18,7 +18,7 @@ def save_embeddings(X, y, filename):
         print(original_input)
         print("Loaded")
         for a in range(len(X)):
-            sys.stdout("\r%d/%d" % (a, len(X)))
+            sys.stdout.write("\r%d/%d" % (a, len(X)))
             feed_dict={original_input:np.asarray(X[a:a+1])}
             curr_embedding = session.run([norm_embeddings], feed_dict=feed_dict)[0][0]
             embeddings.append(list(curr_embedding)+list([y[a]]))
