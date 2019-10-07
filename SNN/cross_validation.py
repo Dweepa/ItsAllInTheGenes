@@ -154,12 +154,15 @@ def cross_validate(session, splitsize):
 		y_train = y[train_indices] 
 		y_val = y[val_indices]
 
-		run_network(session, epochs, X_train, X_val, y_train, y_val)
+		with tf.Session() as session:
+			alpha_initial.initializer.run()
+			tf.initialize_all_variables().run()
+			m = 0
+			print("Initialized")
 
-with tf.Session() as session:
-	alpha_initial.initializer.run()
-	tf.initialize_all_variables().run()
-	print("Initialized")
+			run_network(session, epochs, X_train, X_val, y_train, y_val)
+
+
 
 	result = cross_validate(session,5)
 
