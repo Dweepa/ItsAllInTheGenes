@@ -143,9 +143,11 @@ def run_network(s, epochs, X, test):
             train_acc_l.append(train_acc)
             test_acc_l.append(test_acc)
 
-            #             print(" ", p_loss[-1], n_loss[-1], train_acc, test_acc)
-            print(
-                f"\rEpoch {a}:\t{'{0:.4f}'.format(p_loss[-1])}\t{'{0:.4f}'.format(n_loss[-1])}\t\t{'{0:.2f}'.format(train_acc)}\t{'{0:.2f}'.format(test_acc)}")
+            print(" ", p_loss[-1], n_loss[-1], train_acc, test_acc)
+            # print("\rEpoch {a}:\t{'{0:.4f}'.format(p_loss[-1])}\t{'{0:.4f}'.format(n_loss[-1])}\t\t{'{0:.2f}'.format(train_acc)}\t{'{0:.2f}'.format(test_acc)}")
+            sys.stdout.write(
+                "\rEpoch {0}:\t{0:.4f}\t{0:.4f}\t\t{0:.2f}\t{0:.2f}".format(a, p_loss[-1], n_loss[-1], train_acc,
+                                                                            test_acc))
 
         embeddings = session.run([s.o1, s.o2, s.o3], feed_dict={s.x1: X[0], s.x2: X[1], s.x3: X[2]})
         trained = session.run([s.loss], feed_dict={s.x1: X[0], s.x2: X[1], s.x3: X[2]})
