@@ -121,12 +121,12 @@ def run_network(s, epochs, X, test):
         n_loss = []
         train_acc_l = []
         test_acc_l = []
-        print("Epoch\t\t+ Dist\t- Dist\t\tTrain\tTest")
+        print("Epoch\t\t\t+ Dist\t- Dist\t\tTrain\tTest")
         for a in range(epochs):
             p_loss.append([])
             n_loss.append([])
             for b in range(len(X[0])):
-                sys.stdout.write('\rEpoch %d:\t%d/%d' % (a, b + 1, len(X[0])))
+                sys.stdout.write("\rEpoch %d:\t%d/%d\t" % (a, b + 1, len(X[0])))
                 feed_dict = {s.x1: X[0][b:b + 1], s.x2: X[1][b:b + 1], s.x3: X[2][b:b + 1]}
                 _, _, l = session.run([optim_pos, optim_neg, s.loss], feed_dict=feed_dict)
                 p_loss[-1].append(l[0])
@@ -143,15 +143,17 @@ def run_network(s, epochs, X, test):
             train_acc_l.append(train_acc)
             test_acc_l.append(test_acc)
 
-            print(" ", p_loss[-1], n_loss[-1], train_acc, test_acc)
+            print("%2.3f\t%2.3f\t\t%2.3f\t%2.3f" % (p_loss[-1], n_loss[-1], train_acc, test_acc))
             # print("\rEpoch {a}:\t{'{0:.4f}'.format(p_loss[-1])}\t{'{0:.4f}'.format(n_loss[-1])}\t\t{'{0:.2f}'.format(train_acc)}\t{'{0:.2f}'.format(test_acc)}")
-            sys.stdout.write(
-                "\rEpoch {0}:\t{0:.4f}\t{0:.4f}\t\t{0:.2f}\t{0:.2f}".format(a, p_loss[-1], n_loss[-1], train_acc,
-                                                                            test_acc))
+            # sys.stdout.write("\rEpoch {0}:\t{0:.4f}\t{0:.4f}\t\t{0:.2f}\t{0:.2f}".format(a, p_loss[-1], n_loss[-1], train_acc,test_acc))
 
         embeddings = session.run([s.o1, s.o2, s.o3], feed_dict={s.x1: X[0], s.x2: X[1], s.x3: X[2]})
         trained = session.run([s.loss], feed_dict={s.x1: X[0], s.x2: X[1], s.x3: X[2]})
         pred = session.run([s.loss], feed_dict={s.x1: test[0], s.x2: test[1], s.x3: test[2]})
+
+        tf.summary.FileWriter('./logs', session.graph)
+        saver = tf.train.Saver()
+        saver.save(session, './models/crossvalidate')
 
         return embeddings, trained, pred, p_loss, n_loss, train_acc_l, test_acc_l
 
@@ -170,4 +172,3 @@ def graph(p_loss, n_loss, train_acc_l=None, test_acc_l=None):
         plt.plot(np.arange(epochs), test_acc_l, label='test')
         plt.legend()
         plt.title("Accuracy over epochs")
-        plt.show()
