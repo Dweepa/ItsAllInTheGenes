@@ -63,23 +63,27 @@ def train_and_test_perturbagens(list_of_perturbagens):
     return train, test
 
 
-def generate_triplets(data, pert):
-    same = data[data.target == pert].iloc[:, 0:978].sample(2)
-    diff = data[data.target != pert].iloc[:, 0:978].sample(1)
+def generate_triplets(data_same, data_diff, pert):
+    same = data_same.iloc[:, 0:978].sample(2)
+    diff = data_diff.iloc[:, 0:978].sample(1)
     return np.asarray(same.iloc[0, :]), np.asarray(same.iloc[1, :]), np.asarray(diff.iloc[0, :])
 
 
-def generate_data(data, test_pert, lenperpert, dim=978):
+def generate_data(bigdata, test_pert, lenperpert, dim=978):
+    data = bigdata[bigdata.isin({"target": test_pert})['target'] == True]
     batch_size = len(test_pert) * lenperpert
     print("batch_size: ", batch_size)
     triplets = [np.zeros((batch_size, dim)) for i in range(3)]
     i = 0
     for pert in test_pert:
+        data_same_pert = data[data.target == pert]
+        data_diff_pert = data[data.target != pert]
         for num in range(lenperpert):
             if (i >= batch_size):
                 break
             # anchor, same, different
-            triplets[0][i, :], triplets[1][i, :], triplets[2][i, :] = generate_triplets(data, pert)
+            triplets[0][i, :], triplets[1][i, :], triplets[2][i, :] = generate_triplets(data_same_pert, data_diff_pert,
+                                                                                        pert)
             i += 1
             sys.stdout.write("\r%d/%d" % (i, batch_size))
 
