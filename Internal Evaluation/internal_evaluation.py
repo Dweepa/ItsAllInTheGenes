@@ -45,7 +45,7 @@ def get_set(number, X, y):
 
 
 def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False):
-    cosines = np.dot(X, query_embedding.reshape(32, 1))
+    cosines = np.dot(X, query_embedding.reshape(embedding_length, 1))
     softmax = softmax_function(cosines).flatten()
     sorted_softmax = list(zip(softmax, range(len(y))))
     sorted_softmax.sort(reverse=True)
