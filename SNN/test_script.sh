@@ -18,7 +18,7 @@ do
 
 		for k in $(seq 0 $epoch_len)
 		do
-			python save_embedding.py ${depths[$i]} ${k[$i]} ${embedding_lengths[$j]} ${epochs[$k]}
+			python save_embeddings.py ${depths[$i]} ${k[$i]} ${embedding_lengths[$j]} ${epochs[$k]}
 			python internal_evaluation.py EMB_snn_${depths[$i]}_${k[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
 		done
 	done
