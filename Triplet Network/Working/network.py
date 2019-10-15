@@ -201,7 +201,7 @@ def run_network(model_name, emb_name, s, epoch, X, test, full):
         full_dataset_embeddings = session.run([s.o1], feed_dict={s.x1: full.iloc[:, 0:978]})
         # print(len(full_dataset_embeddings),full_dataset_embeddings[0].shape)
         embfile = "../../Embeddings/" + emb_name + ".csv"
-        cols = ['e' + str(a) for a in range(1, len(full_dataset_embeddings[0][0]))] + ["pert_id"]
+        cols = ['e' + str(a) for a in range(1, len(full_dataset_embeddings[0][0]) + 1)]
         # print(cols)
         e = pd.DataFrame(full_dataset_embeddings[0], columns=cols)
         e['pert_id'] = list(full.target)

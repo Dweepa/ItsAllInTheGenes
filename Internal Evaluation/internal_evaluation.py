@@ -15,12 +15,18 @@ if net_type=='snn':
     k = int(embedding_name.split("_")[3])
     embedding_length = int(embedding_name.split("_")[4].split('-')[0])
 else:
+    layer = int(embedding_name.split("_")[2].split('-')[0])
+    neuron = int(embedding_name.split("_")[3].split('-')[0])
     embedding_length = int(embedding_name.split("_")[4].split('-')[0])
+    dropout = int(embedding_name.split("_")[5].split('-')[0])
+    samples_per_pert = int(embedding_name.split("_")[4].split('-')[0])
 
 embeddings = pd.read_csv('../Embeddings/' + embedding_name)
-
+print(embeddings.head())
 X = np.asarray(embeddings.loc[:, 'e1':'e' + str(embedding_length)])
+# X = np.asarray(embeddings.iloc[:, 0:int(embedding_length)])
 y = np.asarray(embeddings['pert_id'])
+print("shapes: ", X.shape, " ", y.shape)
 perturbagens = np.unique(y)
 
 imp_q = [0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.3]
@@ -45,6 +51,7 @@ def get_set(number, X, y):
 
 
 def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False):
+    # print("\nLength: ",embedding_length, " query_emb: ",type(query_embedding), query_embedding.shape)
     cosines = np.dot(X, query_embedding.reshape(embedding_length, 1))
     softmax = softmax_function(cosines).flatten()
     sorted_softmax = list(zip(softmax, range(len(y))))
@@ -131,13 +138,16 @@ sys.stdout.write("\r%d/%d\n" % (a + 1, test_cases))
 
 
 if net_type=="snn":
-    file = open("../Results/SNN_results", "a")
+    file = open("../Results/SNN_results.csv", "a")
     parameter_count = str(int(978*d*k + 0.5*k*k*d*(d-1)))
 
     outputs = [parameter_count, str(d), str(k), str(embedding_length), 'MOD'+embedding_name[3:], embedding_name]
 
 else:
-    file = open("../Results/Triplet_results", "a")
+    file = open("../Results/Triplet_results.csv", "a")
+    # layer neuron emb_len dropout samples_per_pert
+    outputs = [str(layer), str(neuron), str(embedding_length), str(dropout), str(samples_per_pert),
+               'MOD' + embedding_name[3:], embedding_name]
 
 for a in all_keys:
     outputs.append(str(np.mean(all_outputs[a])))

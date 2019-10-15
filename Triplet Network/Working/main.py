@@ -32,8 +32,10 @@ dropout = int(sys.argv[4])
 samples_per_pert = int(sys.argv[5])
 
 print(layer, neuron, emb_len, dropout, samples_per_pert)
-model_name = "MOD_triplet_" + str(layer) + "_" + str(neuron) + "_" + str(emb_len) + "_" + str(samples_per_pert)
-embedding_name = "EMB_triplet_" + str(layer) + "_" + str(neuron) + "_" + str(emb_len) + "_" + str(samples_per_pert)
+model_name = "MOD_triplet_" + str(layer) + "_" + str(neuron) + "_" + str(emb_len) + "_" + str(dropout) + "_" + str(
+    samples_per_pert)
+embedding_name = "EMB_triplet_" + str(layer) + "_" + str(neuron) + "_" + str(emb_len) + "_" + str(dropout) + "_" + str(
+    samples_per_pert)
 if (os.path.exists('../../Models/' + model_name) == 0):
     os.mkdir('../../Models/' + model_name)
 
