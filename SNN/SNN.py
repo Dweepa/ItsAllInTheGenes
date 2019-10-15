@@ -52,7 +52,6 @@ learning_rate = 0.005
 
 # embedding_length = 32
 number_of_samples = 300
-saving_multiple = 2
 
 print("Creating tensorflow graph")
 tf.reset_default_graph()
