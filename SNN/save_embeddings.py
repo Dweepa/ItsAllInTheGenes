@@ -24,15 +24,15 @@ def save_embeddings(X, y, model_name, epoch):
         norm_embeddings = graph.get_tensor_by_name('norm_embeddings:0')
         print(original_input)
         print("Loaded")
-        for a in range(len(X)):
+        for a in range(1000):
             if a%1000==0:
                 sys.stdout.write("\r%d/%d" % (a, len(X)))
             feed_dict={original_input:np.asarray(X[a:a+1])}
             curr_embedding = session.run([norm_embeddings], feed_dict=feed_dict)[0][0]
             embeddings.append(list(curr_embedding)+list([y[a]]))
         embeddings = pd.DataFrame(embeddings, columns=['e'+str(a) for a in range(1, embedding_length+1)]+['pert_id'])
+        embeddings.to_csv("../Embeddings/"+embedding_name+str(epoch))
         sys.stdout.write("\r%d/%d\nCompleted\n" % (len(X), len(X)))
-        # pickle.dump(embeddings, open(filename, 'wb'))
 
 print("Loaded Modules")
 print("Loading Data")
