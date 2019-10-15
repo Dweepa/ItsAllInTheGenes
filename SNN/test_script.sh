@@ -18,9 +18,11 @@ do
 
 		for k in $(seq 0 $epoch_len)
 		do
-			echo "\nSaving Embeddings for MOD_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}"
+			echo ""
+			echo "Saving Embeddings for MOD_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}"
 			python save_embeddings.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} ${epochs[$k]}
-			echo "\nPerforming Internal Evaluation EMB_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}"
+			echo ""
+			echo "Performing Internal Evaluation EMB_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}"
 			python ../Internal\ Evaluation/internal_evaluation.py EMB_snn_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
 		done
 	done
