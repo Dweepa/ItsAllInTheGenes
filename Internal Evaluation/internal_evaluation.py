@@ -11,9 +11,9 @@ embedding_name = sys.argv[1]
 net_type = embedding_name.split("_")[1]
 
 if net_type=='snn':
-    d = int(embedding_name.split("_")[1])
-    k = int(embedding_name.split("_")[2])
-    embedding_length = int(embedding_name.split("_")[3])
+    d = int(embedding_name.split("_")[2])
+    k = int(embedding_name.split("_")[3])
+    embedding_length = int(embedding_name.split("_")[4])
 else:
     pass
 
