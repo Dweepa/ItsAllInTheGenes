@@ -142,5 +142,5 @@ else:
 for a in all_keys:
     outputs.append(np.mean(all_outputs[a]))
 
-file.write(outputs.join(","))
+file.write(",".join(outputs))
 file.close()
