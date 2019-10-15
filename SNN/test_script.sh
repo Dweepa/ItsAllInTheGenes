@@ -14,7 +14,7 @@ for i in $(seq 0 $d_len)
 do
 	for j in $(seq 0 $emb_len)
 	do
-		echo "Creating models for MOD_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}"
+		echo "Creating Models for MOD_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}"
 		python3 SNN.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]}
 
 		for k in $(seq 0 $epoch_len)
