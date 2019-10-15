@@ -131,4 +131,3 @@ with tf.Session() as session:
             saver.save(session, '../Models/'+model_name+"/"+model_name, global_step=a)
     saver.save(session, '../Models/'+model_name+"/"+model_name, global_step=epochs)
 
-os.rename('../Models/'+model_name+"/"+model_name+'-'+str(epochs)+'.meta', '../Models/'+model_name+'.meta')
