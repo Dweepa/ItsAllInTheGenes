@@ -15,7 +15,7 @@ if net_type=='snn':
     k = int(embedding_name.split("_")[3])
     embedding_length = int(embedding_name.split("_")[4].split('-')[0])
 else:
-    pass
+    embedding_length = int(embedding_name.split("_")[4].split('-')[0])
 
 embeddings = pd.read_csv('../Embeddings/' + embedding_name)
 
