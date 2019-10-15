@@ -140,7 +140,7 @@ else:
     file = open("../Results/Triplet_results")
 
 for a in all_keys:
-    outputs.append(np.mean(all_outputs[a]))
+    outputs.append(str(np.mean(all_outputs[a])))
 
 file.write(",".join(outputs))
 file.close()
