@@ -131,13 +131,13 @@ sys.stdout.write("\r%d/%d\n" % (a + 1, test_cases))
 
 
 if net_type=="snn":
-    file = open("../Results/SNN_results")
+    file = open("../Results/SNN_results", "a")
     parameter_count = str(978*d*k + 0.5*k*k*d*(d-1))
 
     outputs = [parameter_count, str(d), str(k), str(embedding_length), 'MOD'+embedding_name[3:], embedding_name]
 
 else:
-    file = open("../Results/Triplet_results")
+    file = open("../Results/Triplet_results", "a")
 
 for a in all_keys:
     outputs.append(str(np.mean(all_outputs[a])))
