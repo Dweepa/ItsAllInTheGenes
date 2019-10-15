@@ -47,12 +47,12 @@ input_size = 978
 n_classes = 2170
 # n_units = 21
 batch_size = 3000
-epochs = 10
+epochs = 100
 learning_rate = 0.005
 
 # embedding_length = 32
 number_of_samples = 300
-saving_multiple = 2
+saving_multiple = 25
 
 print("Creating tensorflow graph")
 tf.reset_default_graph()
