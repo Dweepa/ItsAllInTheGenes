@@ -19,7 +19,7 @@ n_units = int(sys.argv[2])
 embedding_length = int(sys.argv[3])
 model_name = "MOD_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 
-os.mkdir("../models/"+model_name)
+os.mkdir('../model/'+model_name)
 
 print("Loaded Modules")
 print("Loading Data")
@@ -52,6 +52,7 @@ learning_rate = 0.005
 
 # embedding_length = 32
 number_of_samples = 300
+saving_multiple = 2
 
 print("Creating tensorflow graph")
 tf.reset_default_graph()
@@ -130,3 +131,4 @@ with tf.Session() as session:
             saver.save(session, '../models/'+model_name+model_name, global_step=a)
     saver.save(session, '../models/'+model_name+model_name, global_step=epochs)
 
+os.rename('../models/'+model_name+model_name+'-'+str(epochs)+'.meta', '../models/'+model_name+'.meta')
