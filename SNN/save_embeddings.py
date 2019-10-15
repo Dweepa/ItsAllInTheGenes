@@ -22,7 +22,7 @@ def save_embeddings(X, y, model_name, epoch):
         graph = tf.get_default_graph()
         original_input = graph.get_tensor_by_name('gene_expression:0')
         norm_embeddings = graph.get_tensor_by_name('norm_embeddings:0')
-        print("Loaded "+model_name+"-"+str(epoch))
+        # print("Loaded "+model_name+"-"+str(epoch))
         for a in range(len(X)):
             if a%1000==0:
                 sys.stdout.write("\r%d/%d" % (a, len(X)))
@@ -33,11 +33,11 @@ def save_embeddings(X, y, model_name, epoch):
         embeddings.to_csv("../Embeddings/"+embedding_name+"-"+str(epoch))
         sys.stdout.write("\r%d/%d\nCompleted\n" % (len(X), len(X)))
 
-print("Loaded Modules")
-print("Loading Data")
+# print("Loaded Modules")
+# print("Loading Data")
 data = pickle.load(open('../Data/full', 'rb'))
 
-print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
+# print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
 
 X = data.loc[:, '780':'79716']
 y = list(data['target'])

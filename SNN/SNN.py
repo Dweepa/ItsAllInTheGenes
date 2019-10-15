@@ -21,10 +21,10 @@ model_name = "MOD_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 
 os.mkdir('../Models/'+model_name)
 
-print("Loaded Modules")
-print("Loading Data")
+# print("Loaded Modules")
+# print("Loading Data")
 data = pickle.load(open('../Data/full', 'rb'))
-print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
+# print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
 
 X = data.loc[:, '780':'79716']
 y = list(data['target'])
@@ -54,7 +54,7 @@ learning_rate = 0.005
 number_of_samples = 300
 saving_multiple = 25
 
-print("Creating tensorflow graph")
+# print("Creating tensorflow graph")
 tf.reset_default_graph()
 
 inputs = tf.placeholder(tf.float32, [None, input_size], name='gene_expression')
@@ -96,14 +96,14 @@ m_max = 25
 
 optimizer = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
-print("Graph generated")
+# print("Graph generated")
 saver = tf.train.Saver(max_to_keep=3)
 with tf.Session() as session:    
     feed_dict={original_input:X, labels: y, margin: m}    
     
     alpha_initial.initializer.run()
     tf.initialize_all_variables().run()
-    print("Initialized")
+    # print("Initialized")
     
     total = np.asarray(session.run([original_input], feed_dict=feed_dict)).shape[1]
     order = np.arange(total)
