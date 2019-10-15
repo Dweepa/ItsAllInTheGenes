@@ -22,7 +22,7 @@ else:
     samples_per_pert = int(embedding_name.split("_")[4].split('-')[0])
 
 embeddings = pd.read_csv('../Embeddings/' + embedding_name)
-print(embeddings.head())
+# print(embeddings.head())
 X = np.asarray(embeddings.loc[:, 'e1':'e' + str(embedding_length)])
 # X = np.asarray(embeddings.iloc[:, 0:int(embedding_length)])
 y = np.asarray(embeddings['pert_id'])
