@@ -100,7 +100,7 @@ def get_data(bigdata, all_pert, samples_per_pert):
         test = pickle.load(open(test_data, 'rb'))
     except:
         train, test = train_and_test_perturbagens(all_pert)
-        print("train: ", train, " test: ", test)
+        # print("train: ", train, " test: ", test)
         X = generate_data(bigdata, train, samples_per_pert, dim=978)
         test = generate_data(bigdata, test, samples_per_pert, dim=978)
         pickle.dump(X, open(train_data, 'wb'))
