@@ -19,7 +19,7 @@ n_units = int(sys.argv[2])
 embedding_length = int(sys.argv[3])
 model_name = "MOD_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 
-os.mkdir('../model/'+model_name)
+os.mkdir('../Models/'+model_name)
 
 print("Loaded Modules")
 print("Loading Data")
@@ -128,7 +128,7 @@ with tf.Session() as session:
     
     # tf.summary.FileWriter('./logs', session.graph)
         if a%saving_multiple==0:
-            saver.save(session, '../models/'+model_name+model_name, global_step=a)
-    saver.save(session, '../models/'+model_name+model_name, global_step=epochs)
+            saver.save(session, '../Models/'+model_name+model_name, global_step=a)
+    saver.save(session, '../Models/'+model_name+model_name, global_step=epochs)
 
-os.rename('../models/'+model_name+model_name+'-'+str(epochs)+'.meta', '../models/'+model_name+'.meta')
+os.rename('../Models/'+model_name+model_name+'-'+str(epochs)+'.meta', '../Models/'+model_name+'.meta')
