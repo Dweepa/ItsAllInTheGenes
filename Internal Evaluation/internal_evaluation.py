@@ -26,7 +26,7 @@ embeddings = pd.read_csv('../Embeddings/' + embedding_name)
 X = np.asarray(embeddings.loc[:, 'e1':'e' + str(embedding_length)])
 # X = np.asarray(embeddings.iloc[:, 0:int(embedding_length)])
 y = np.asarray(embeddings['pert_id'])
-print("shapes: ", X.shape, " ", y.shape)
+# print("shapes: ", X.shape, " ", y.shape)
 perturbagens = np.unique(y)
 
 imp_q = [0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.3]
