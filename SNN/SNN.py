@@ -11,7 +11,13 @@ import math
 from sklearn.model_selection import train_test_split
 import os
 
-filename = sys.argv[1]
+# parameters modelname d k embeddingname embedding_length
+# python3 SNN.py 
+
+n_layers = int(sys.argv[1])
+n_units = int(sys.argv[2])
+embedding_length = int(sys.argv[3])
+model_name = "snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 
 print("Loaded Modules")
 print("Loading Data")
@@ -35,16 +41,16 @@ y = np.asarray(y[:100]).flatten()
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 input_size = 978
-n_layers = 16
+# n_layers = 16
 n_classes = 2170
-n_units = 21
+# n_units = 21
 batch_size = 3000
-epochs = 20
+epochs = 100
 learning_rate = 0.005
 
-embedding_length = 32
+# embedding_length = 32
 number_of_samples = 300
-saving_multiple = 5
+saving_multiple = 25
 
 print("Creating tensorflow graph")
 tf.reset_default_graph()
@@ -89,14 +95,9 @@ m_max = 25
 optimizer = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
 print("Graph generated")
-saver = tf.train.Saver(max_to_keep=2)
-with tf.Session() as session:
-    feed_dict={original_input:np.random.rand(number_of_samples, input_size),
-                                     labels: np.random.randint(0, n_classes, number_of_samples),
-                                      margin: m}
-    
-    feed_dict={original_input:X, labels: y, margin: m}
-    
+saver = tf.train.Saver(max_to_keep=3)
+with tf.Session() as session:    
+    feed_dict={original_input:X, labels: y, margin: m}    
     
     alpha_initial.initializer.run()
     tf.initialize_all_variables().run()
@@ -127,4 +128,5 @@ with tf.Session() as session:
         if a%saving_multiple==0:
             saver.save(session, './models/'+filename+'/'+filename, global_step=a)
     saver.save(session, './models/'+filename+'/'+filename, global_step=epochs)
+
 os.rename('./models/'+filename+'/'+filename+'-'+str(epochs)+'.meta', './models/'+filename+'/'+filename+'.meta')
