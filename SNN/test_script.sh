@@ -20,6 +20,7 @@ do
 		do
 			python save_embeddings.py ${depths[$i]} ${k[$i]} ${embedding_lengths[$j]} ${epochs[$k]}
 			python ../Internal Evaluation/internal_evaluation.py EMB_snn_${depths[$i]}_${k[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
+			exit
 		done
 	done
 done
