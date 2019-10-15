@@ -43,5 +43,5 @@ print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {le
 X = data.loc[:, '780':'79716']
 y = list(data['target'])
 
-for a in epochs:
-    save_embeddings(X, y, './embeddings/'+embeddingname)
+for epoch in epochs:
+    save_embeddings(X, y, model_name, epoch)
