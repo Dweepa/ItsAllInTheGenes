@@ -134,7 +134,7 @@ for a in range(test_cases):
     imp_q_val = full_internal_evaluation(X_small[ind], y_small[ind], X_small, y_small, printinfo=False)
     for key in imp_q_val.keys():
         all_outputs[key].append(imp_q_val[key])
-sys.stdout.write("\r%d/%d\n" % (a + 1, test_cases))
+sys.stdout.write("\r%d/%d\nCompleted\n" % (a + 1, test_cases))
 
 
 if net_type=="snn":
