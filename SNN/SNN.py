@@ -128,7 +128,7 @@ with tf.Session() as session:
     
     # tf.summary.FileWriter('./logs', session.graph)
         if a%saving_multiple==0:
-            saver.save(session, '../Models/'+model_name+model_name, global_step=a)
-    saver.save(session, '../Models/'+model_name+model_name, global_step=epochs)
+            saver.save(session, '../Models/'+model_name+"/"+model_name, global_step=a)
+    saver.save(session, '../Models/'+model_name+"/"+model_name, global_step=epochs)
 
-os.rename('../Models/'+model_name+model_name+'-'+str(epochs)+'.meta', '../Models/'+model_name+'.meta')
+os.rename('../Models/'+model_name+"/"+model_name+'-'+str(epochs)+'.meta', '../Models/'+model_name+'.meta')
