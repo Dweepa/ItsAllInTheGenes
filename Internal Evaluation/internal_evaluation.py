@@ -13,7 +13,7 @@ net_type = embedding_name.split("_")[1]
 if net_type=='snn':
     d = int(embedding_name.split("_")[2])
     k = int(embedding_name.split("_")[3])
-    embedding_length = int(embedding_name.split("_")[4])
+    embedding_length = int(embedding_name.split("_")[4].split('-')[0])
 else:
     pass
 
