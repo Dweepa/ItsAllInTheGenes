@@ -4,6 +4,7 @@ import numpy as np
 import json
 from collections import Counter
 import sys
+import pickle
 
 
 def get_target_labels(working_data, mydict):
@@ -50,10 +51,10 @@ def gctx2pd(gctxfile, jsonfile):
     return data, metadata
 
 
-# Split list of all perturbagens into (train-80%) and (test-20%)
+# Split list of all perturbagens into (train-95%) and (test-5%)
 def train_and_test_perturbagens(list_of_perturbagens):
     rng = np.random
-    train = rng.choice(list_of_perturbagens, size=(len(list_of_perturbagens) * 4 // 5,), replace=False)
+    train = rng.choice(list_of_perturbagens, size=(len(list_of_perturbagens) * 95 // 100,), replace=False)
 
     def Diff(li1, li2):
         li_dif = [i for i in li1 if i not in li1 or i not in li2]
@@ -69,7 +70,7 @@ def generate_triplets(data_same, data_diff, pert):
     return np.asarray(same.iloc[0, :]), np.asarray(same.iloc[1, :]), np.asarray(diff.iloc[0, :])
 
 
-# TO-DO: lenperpert is system argument
+# TODO: lenperpert is system argument
 def generate_data(bigdata, test_pert, lenperpert, dim=978):
     data = bigdata[bigdata.isin({"target": test_pert})['target'] == True]
     batch_size = len(test_pert) * lenperpert
@@ -89,3 +90,20 @@ def generate_data(bigdata, test_pert, lenperpert, dim=978):
             sys.stdout.write("\r%d/%d" % (i, batch_size))
 
     return np.asarray(triplets)
+
+
+def get_data(bigdata, all_pert, samples_per_pert):
+    train_data = '../../Data/X_train_triplet_' + str(samples_per_pert)
+    test_data = '../../Data/X_test_triplet_' + str(samples_per_pert)
+    try:
+        X = pickle.load(open(train_data, 'rb'))
+        test = pickle.load(open(test_data, 'rb'))
+    except:
+        train, test = train_and_test_perturbagens(all_pert)
+        print("train: ", train, " test: ", test)
+        X = generate_data(bigdata, train, samples_per_pert, dim=978)
+        test = generate_data(bigdata, test, samples_per_pert, dim=978)
+        pickle.dump(X, open(train_data, 'wb'))
+        pickle.dump(test, open(test_data, 'wb'))
+    # print(X,test)
+    return X, test
