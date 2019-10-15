@@ -8,15 +8,23 @@ import sys
 from collections import Counter
 
 embedding_name = sys.argv[1]
-embedding_length = 32
+net_type = embedding_name.split("_")[1]
 
-embeddings = pickle.load(open('../Embedding/' + embedding_name, 'rb'))
+if net_type=='snn':
+    d = embedding_name.split("_")[1]
+    k = embedding_name.split("_")[2]
+    embedding_length = int(embedding_name.split("_")[3])
+else:
+    pass
+
+embeddings = pd.read_csv('../Embeddings/' + embedding_name)
 
 X = np.asarray(embeddings.loc[:, 'e1':'e' + str(embedding_length)])
-y = np.asarray(embeddings['target'])
+y = np.asarray(embeddings['pert_id'])
 perturbagens = np.unique(y)
 
 imp_q = [0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.3]
+all_keys = [0.0001, 0.001, 0.01, 0.05, 0.1, 0.2, 0.3, "median", "auc"]
 
 
 def softmax_function(x):
@@ -71,6 +79,7 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
         print("Median Quantile:", median)
 
     results = pd.DataFrame(list(zip(imp_q, imp_q_val)), columns=['Quantile', 'Recall'])
+    
     if printinfo:
         display(HTML(results.to_html()))
         plt.figure(figsize=[20, 6])
@@ -78,7 +87,9 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
         plt.ylabel("Percentage of positive perturbagens below quantile")
         plt.plot(x_values, y_values)
         plt.show()
+    
     auc = roc_auc_score(ordered['label'], ordered['softmax'])
+    
     if printinfo:
         #		 plt.figure(figsize=[20,6])
         #		 fpr, tpr, thresholds = roc_curve(ordered['label'], ordered['softmax'])
@@ -118,5 +129,18 @@ for a in range(test_cases):
         all_outputs[key].append(imp_q_val[key])
 sys.stdout.write("\r%d/%d\n" % (a + 1, test_cases))
 
-for a in all_outputs.keys():
-    print(np.mean(all_outputs[a]))
+
+if net_type=="snn":
+    file = open("../Results/SNN")
+    parameter_count = str(978*d*k + 0.5*k*k*d*(d-1))
+
+    outputs = [parameter_count, str(d), str(k), str(embedding_length), 'MOD'+embedding_name[3:], embedding_name]
+
+else:
+    pass
+
+for a in all_keys:
+    outputs.append(np.mean(all_outputs[a]))
+
+file.write(outputs.join(","))
+file.close()

@@ -22,7 +22,7 @@ def save_embeddings(X, y, model_name, epoch):
         graph = tf.get_default_graph()
         original_input = graph.get_tensor_by_name('gene_expression:0')
         norm_embeddings = graph.get_tensor_by_name('norm_embeddings:0')
-        print("Loaded "+model_name)
+        print("Loaded "+model_name+"-"+str(epoch))_
         for a in range(len(X)):
             if a%1000==0:
                 sys.stdout.write("\r%d/%d" % (a, len(X)))
