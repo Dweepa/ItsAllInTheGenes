@@ -22,10 +22,10 @@ do
 		do
 			echo ""
 			echo "Saving Embeddings for MOD_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}"
-			python save_embeddings.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} 0 ${epochs[$k]}
+			python3 save_embeddings.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} 0 ${epochs[$k]}
 			echo ""
 			echo "Performing Internal Evaluation for EMB_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}"
-			python ../Internal\ Evaluation/internal_evaluation.py EMB_snn_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
+			python3 ../Internal\ Evaluation/internal_evaluation.py EMB_snn_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
 		done
 	done
 done
