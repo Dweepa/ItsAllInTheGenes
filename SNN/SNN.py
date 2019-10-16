@@ -28,6 +28,7 @@ train_pert, test_pert = train_and_test_perturbagens(all_pert, 95)
 
 # Generate Data
 X_train, y_train, X_test, y_test = generate_data(full, train_pert, test_pert)
+X_train = pd.DataFrame(X_train)
 # print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
 
 pickle.dump(X_test, open('../Data/SNN_temp_X_test', 'wb'))
