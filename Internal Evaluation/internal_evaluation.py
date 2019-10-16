@@ -8,7 +8,6 @@ import random
 import sys
 from collections import Counter
 
-
 embedding_name = sys.argv[1]
 net_type = embedding_name.split("_")[1]
 
@@ -104,7 +103,7 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
     roc_auc = metrics.auc(fpr, tpr)
 
     plt.title('Receiver Operating Characteristic')
-    plt.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
+    plt.plot(fpr, tpr, 'b', label='AUC = ' + str(roc_auc))
     plt.legend(loc='lower right')
     plt.plot([0, 1], [0, 1], 'r--')
     plt.xlim([0, 1])
@@ -113,10 +112,11 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
     plt.xlabel('False Positive Rate')
     # plt.show()
 
-    graphname = "AUC_triplet_" + str(layer) + '_' + str(neuron) + '_' + str(embedding_length) + '_' + str(
+    # TODO: figure out how to index auc graphs by test cases
+    graphname = "AUC_" + net_type + "_" + str(layer) + '_' + str(neuron) + '_' + str(embedding_length) + '_' + str(
         dropout) + '_' + str(samples_per_pert)
     plt.savefig("../Results/" + graphname)
-
+    plt.clf()
     if printinfo:
         #		 plt.figure(figsize=[20,6])
         #		 fpr, tpr, thresholds = roc_curve(ordered['label'], ordered['softmax'])
@@ -147,6 +147,7 @@ all_outputs['median'] = []
 all_outputs['auc'] = []
 
 test_cases = 10
+
 # printinfo = true
 for a in range(test_cases):
     sys.stdout.write("\r%d/%d" % (a, test_cases))
