@@ -1,9 +1,9 @@
 #!/bin/bash
 # sys arguments: layer neuron emb_len dropout samples_per_pert
-layer=(10 20 30 40)
-neuron=(8 16 32 64 128 256)
+layer=(3 4 5 10 20)
+neuron=(8 16 32 64 128 256 512 1024)
 embedding_lengths=(8 16 32)
-dropout=(0 1)
+dropout=(0 0.1 0.2 0.5 0.8 0.9)
 epochs=(50 75 100 200)
 samples_per_pert=(50 100 200)
 
@@ -33,10 +33,10 @@ do
 	        do
 	          echo ""
             echo "Saving Embeddings for MOD_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}-${epochs[$k]}"
-            python main.py ${layer[$lay]} ${neuron[$neu]} ${embedding_lengths[$emb]} ${dropout[$drop]} ${samples_per_pert[$sample]}
+            python3 main.py ${layer[$lay]} ${neuron[$neu]} ${embedding_lengths[$emb]} ${dropout[$drop]} ${samples_per_pert[$sample]}
             echo ""
             echo "Performing Internal Evaluation for EMB_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}"
-            python ../../Internal\ Evaluation/internal_evaluation.py EMB_triplet_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
+            python3 ../../Internal\ Evaluation/internal_evaluation.py EMB_triplet_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
           done
 
         done

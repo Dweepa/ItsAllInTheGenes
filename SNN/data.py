@@ -64,12 +64,6 @@ def train_and_test_perturbagens(list_of_perturbagens, split):
     return train, test
 
 
-def generate_triplets(data_same, data_diff, pert):
-    same = data_same.iloc[:, 0:978].sample(2)
-    diff = data_diff.iloc[:, 0:978].sample(1)
-    return np.asarray(same.iloc[0, :]), np.asarray(same.iloc[1, :]), np.asarray(diff.iloc[0, :])
-
-
 def generate_data(bigdata, train_pert, test_pert):
     X_train = bigdata[bigdata.isin({"target": train_pert})['target'] == True]
     y_train = X_train.target

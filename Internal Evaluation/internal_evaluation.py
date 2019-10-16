@@ -53,7 +53,7 @@ def get_set(number, X, y):
     return X[ind], y[ind]
 
 
-def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False):
+def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=True):
     # print("\nLength: ",embedding_length, " query_emb: ",type(query_embedding), query_embedding.shape)
     cosines = np.dot(X, query_embedding.reshape(embedding_length, 1))
     softmax = softmax_function(cosines).flatten()
@@ -91,7 +91,7 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
     results = pd.DataFrame(list(zip(imp_q, imp_q_val)), columns=['Quantile', 'Recall'])
     
     if printinfo:
-        display(HTML(results.to_html()))
+        # display(HTML(results.to_html()))
         plt.figure(figsize=[20, 6])
         plt.xlabel("Quantile")
         plt.ylabel("Percentage of positive perturbagens below quantile")
