@@ -1,9 +1,9 @@
 #!/bin/bash
 # sys arguments: layer neuron emb_len dropout samples_per_pert
-layer=(10 20 30 40)
-neuron=(8 16 32 64 128 256)
+layer=(3 4 5 10 20)
+neuron=(8 16 32 64 128 256 512 1024)
 embedding_lengths=(8 16 32)
-dropout=(0 1)
+dropout=(0 0.1 0.2 0.5 0.8 0.9)
 epochs=(50 75 100 200)
 samples_per_pert=(50 100 200)
 

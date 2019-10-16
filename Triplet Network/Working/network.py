@@ -51,13 +51,12 @@ class siamese:
 
     def normalnet(self, x, num_layers, neuron, emb_len, dropout):
 
-        # TODO: fix the damn network
         input = x
         for l in range(num_layers):
             name = "fc" + str(l)
             fc1 = self.fc_layer(input, neuron, name)
             ac1 = tf.nn.relu(fc1)
-            d1 = tf.nn.dropout(ac1, 0.5)
+            d1 = tf.nn.dropout(ac1, dropout)
             if (dropout):
                 input = d1
             else:
@@ -66,22 +65,6 @@ class siamese:
         fc_last = self.fc_layer(input, emb_len, "fc_embedding")
         fc_last = tf.nn.l2_normalize(fc_last, axis=1)
         return fc_last
-
-        # fc1 = self.fc_layer(x, 1024, "fc1")
-        # ac1 = tf.nn.relu(fc1)
-        # d1 = tf.nn.dropout(ac1, 0.5)
-        #
-        # fc2 = self.fc_layer(ac1, 1024, "fc2")
-        # ac2 = tf.nn.relu(fc2)
-        # d2 = tf.nn.dropout(ac2, 0.5)
-        #
-        # fc3 = self.fc_layer(ac2, 1024, "fc3")
-        # ac3 = tf.nn.relu(fc3)
-        # d3 = tf.nn.dropout(ac3, 0.5)
-        #
-        # fc_last = self.fc_layer(ac3, emb_len, "fc_embedding")
-        # fc_last = tf.nn.l2_normalize(fc_last, axis=1)
-        # return fc_last
 
     # TODO: fill up densenet
     def dense_network(self, x, num_layers, neuron, emb_len, dropout):

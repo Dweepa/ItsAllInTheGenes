@@ -23,13 +23,15 @@ import os
 - samples per perturbagen: 50, 100, 200
 
 sys arguments: layer neuron emb_len dropout samples_per_pert 
+
+moral: layers is less, neuron is more
 '''
 
 # command-line arguments
 layer = int(sys.argv[1])
 neuron = int(sys.argv[2])
 emb_len = int(sys.argv[3])
-dropout = int(sys.argv[4])
+dropout = float(sys.argv[4])
 samples_per_pert = int(sys.argv[5])
 
 print(layer, neuron, emb_len, dropout, samples_per_pert)
@@ -52,7 +54,7 @@ dbfile.close()
 all_pert = np.concatenate((train_pert, test_pert))
 
 # Testing on unseen perturbagens
-epoch = 20
+epoch = 200
 s = siamese("cos", "net", layer, neuron, emb_len, dropout)
 print("= Created Model")
 split = 95
