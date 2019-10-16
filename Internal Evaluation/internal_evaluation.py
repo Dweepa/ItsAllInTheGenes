@@ -46,8 +46,10 @@ def label_positive(row, label, y):
 
 
 def get_set(number, X, y):
-    selection = perturbagens[np.random.choice(len(perturbagens), number, replace=False)]
-    ind = [y[a] in selection for a in range(len(y))]
+    if len(X)<number:
+        return X, y
+    selection = np.random.choice(len(X), number, replace=False)
+    ind = [a in selection for a in range(len(y))]
     return X[ind], y[ind]
 
 
@@ -151,7 +153,7 @@ test_cases = 10
 # printinfo = true
 for a in range(test_cases):
     sys.stdout.write("\r%d/%d" % (a, test_cases))
-    X_small, y_small = get_set(100, X, y)
+    X_small, y_small = get_set(10000, X, y)
     ind = np.random.choice(len(y_small), 1)
     imp_q_val = full_internal_evaluation(X_small[ind], y_small[ind], X_small, y_small, printinfo=False)
     for key in imp_q_val.keys():
