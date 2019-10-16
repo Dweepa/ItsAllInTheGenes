@@ -2,10 +2,12 @@ import pandas as pd
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, roc_auc_score
+from sklearn.metrics import roc_curve, roc_auc_score, auc
+import sklearn.metrics as metrics
 import random
 import sys
 from collections import Counter
+
 
 embedding_name = sys.argv[1]
 net_type = embedding_name.split("_")[1]
@@ -96,7 +98,25 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
         plt.show()
     
     auc = roc_auc_score(ordered['label'], ordered['softmax'])
-    
+
+    # Plotting AUC curve
+    fpr, tpr, threshold = roc_curve(ordered['label'], ordered['softmax'])
+    roc_auc = metrics.auc(fpr, tpr)
+
+    plt.title('Receiver Operating Characteristic')
+    plt.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
+    plt.legend(loc='lower right')
+    plt.plot([0, 1], [0, 1], 'r--')
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
+    # plt.show()
+
+    graphname = "AUC_triplet_" + str(layer) + '_' + str(neuron) + '_' + str(embedding_length) + '_' + str(
+        dropout) + '_' + str(samples_per_pert)
+    plt.savefig("../Results/" + graphname)
+
     if printinfo:
         #		 plt.figure(figsize=[20,6])
         #		 fpr, tpr, thresholds = roc_curve(ordered['label'], ordered['softmax'])
