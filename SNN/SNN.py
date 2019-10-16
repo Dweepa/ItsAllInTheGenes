@@ -49,13 +49,14 @@ data = pickle.load(open('../Data/full', 'rb'))
 
 X = data.loc[:, '780':'79716']
 y = list(data['target'])
+
 pert_dict = {}
 num = 0
-for a in range(len(y)):
-    if y[a] not in pert_dict.keys():
-        pert_dict[y[a]] = num
+for a in range(len(y_train)):
+    if y_train[a] not in pert_dict.keys():
+        pert_dict[y_train[a]] = num
         num+=1
-    y[a] = pert_dict[y[a]]
+    y_train[a] = pert_dict[y_train[a]]
 
 # X = X[:100]
 # y = np.asarray(y[:100]).flatten()
