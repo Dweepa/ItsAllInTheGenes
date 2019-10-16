@@ -10,7 +10,6 @@ import random
 import pandas as pd
 
 '''
-TODO: 
 - loss = cosine, problem with euclidean
 - net = Vanilla/Denset
 - layers: number of layers
@@ -133,10 +132,10 @@ class siamese:
         return eucd2_mean, eucd3_mean, eucd2, eucd3
 
 
-# TODO: Consistency in results
+# TODO: consistency in results
 '''
-- Median
-- AUC
+- Median 
+- AUC (write code)
 - Top-x recall
 '''
 

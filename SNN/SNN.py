@@ -10,9 +10,25 @@ import pickle
 import math
 from sklearn.model_selection import train_test_split
 import os
+from data import *
 
 # parameters modelname d k embeddingname embedding_length
 # python3 SNN.py 
+
+
+full = pickle.load(open('../Data/full', 'rb'))
+test_pert = pickle.load(open('../Data/test_perts', 'rb'))
+train_pert = pickle.load(open('../Data/train_perts', 'rb'))
+
+# List of all perturbagens
+all_pert = np.concatenate((train_pert, test_pert))
+
+# Get train and test perturbagen
+train_pert, test_pert = train_and_test_perturbagens(all_pert, 95)
+
+# Generate Data
+X_train, y_train, X_test, y_test = generate_data(full, train_pert, test_pert)
+print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
 
 n_layers = int(sys.argv[1])
 n_units = int(sys.argv[2])

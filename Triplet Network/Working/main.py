@@ -11,7 +11,7 @@ from network import *
 from data import *
 import os
 
-# TODO:
+
 '''
 - loss = cosine, problem with euclidean
 - net = Vanilla/Denset
@@ -56,7 +56,8 @@ all_pert = np.concatenate((train_pert, test_pert))
 epoch = 200
 s = siamese("cos", "net", layer, neuron, emb_len, dropout)
 print("= Created Model")
-X, test = get_data(full, all_pert, samples_per_pert)
+split = 95
+X, test = get_data(full, all_pert, samples_per_pert, split)
 # X, test = get_data(full, all_pert[0:30], 2)
 print("== Got Data")
 full_dataset_embeddings, embeddings, trained, pred, p_loss, n_loss, train_acc_l, test_acc_l = \
