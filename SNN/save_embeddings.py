@@ -9,7 +9,8 @@ import pandas as pd
 n_layers = int(sys.argv[1])
 n_units = int(sys.argv[2])
 embedding_length = int(sys.argv[3])
-epochs = [int(a) for a in sys.argv[4:]]
+only_test = bool(sys.argv[4])
+epochs = [int(a) for a in sys.argv[5:]]
 
 model_name = "MOD_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 embedding_name =  "EMB_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
@@ -35,12 +36,18 @@ def save_embeddings(X, y, model_name, epoch):
 
 # print("Loaded Modules")
 # print("Loading Data")
-data = pickle.load(open('../Data/full', 'rb'))
+# data = pickle.load(open('../Data/full', 'rb'))
 
 # print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
 
-X = data.loc[:, '780':'79716']
-y = list(data['target'])
+if only_test==True:
+    X = pickle.load(open('../Data/SNN_temp_X_test', 'rb'))
+    y = pickle.load(open('../Data/SNN_temp_y_test', 'rb'))
+
+else:
+    data = pickle.load(open('../Data/full', 'rb'))
+    X = data.loc[:, '780':'79716']
+    y = list(data['target'])
 
 for epoch in epochs:
     save_embeddings(X, y, model_name, epoch)

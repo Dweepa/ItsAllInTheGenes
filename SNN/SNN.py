@@ -28,13 +28,19 @@ train_pert, test_pert = train_and_test_perturbagens(all_pert, 95)
 
 # Generate Data
 X_train, y_train, X_test, y_test = generate_data(full, train_pert, test_pert)
-print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+X_train = pd.DataFrame(X_train)
+# print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+
+pickle.dump(X_test, open('../Data/SNN_temp_X_test', 'wb'))
+pickle.dump(y_test, open('../Data/SNN_temp_y_test', 'wb'))
 # --- End of Dweepa Code ----
 
 
 n_layers = int(sys.argv[1])
 n_units = int(sys.argv[2])
 embedding_length = int(sys.argv[3])
+epochs = int(sys.argv[4])
+saving_multiple = int(sys.argv[5])
 model_name = "MOD_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 
 os.mkdir('../Models/'+model_name)
@@ -42,17 +48,16 @@ os.mkdir('../Models/'+model_name)
 # print("Loaded Modules")
 # print("Loading Data")
 data = pickle.load(open('../Data/full', 'rb'))
-# print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
-
 X = data.loc[:, '780':'79716']
 y = list(data['target'])
+
 pert_dict = {}
 num = 0
-for a in range(len(y)):
-    if y[a] not in pert_dict.keys():
-        pert_dict[y[a]] = num
+for a in range(len(y_train)):
+    if y_train[a] not in pert_dict.keys():
+        pert_dict[y_train[a]] = num
         num+=1
-    y[a] = pert_dict[y[a]]
+    y_train[a] = pert_dict[y_train[a]]
 
 # X = X[:100]
 # y = np.asarray(y[:100]).flatten()
@@ -65,12 +70,12 @@ input_size = 978
 n_classes = 2170
 # n_units = 21
 batch_size = 3000
-epochs = 100
+# epochs = 100
 learning_rate = 0.005
 
 # embedding_length = 32
 number_of_samples = 300
-saving_multiple = 25
+# saving_multiple = 25
 
 # print("Creating tensorflow graph")
 tf.reset_default_graph()
@@ -117,7 +122,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 # print("Graph generated")
 saver = tf.train.Saver(max_to_keep=3)
 with tf.Session() as session:    
-    feed_dict={original_input:X, labels: y, margin: m}    
+    feed_dict={original_input:X_train, labels: y_train, margin: m}    
     
     alpha_initial.initializer.run()
     tf.initialize_all_variables().run()
@@ -134,8 +139,8 @@ with tf.Session() as session:
         for ind in range(0, total, batch_size):
             sys.stdout.flush()
             perc = math.ceil(50*(ind/total))
-            feed_dict[original_input] = X.iloc[order[ind:ind+batch_size]]
-            feed_dict[labels] = [y[a] for a in order[ind:ind+batch_size]]
+            feed_dict[original_input] = X_train.iloc[order[ind:ind+batch_size]]
+            feed_dict[labels] = [y_train[a] for a in order[ind:ind+batch_size]]
             _, l = session.run([optimizer, loss], feed_dict=feed_dict)
             sys.stdout.write("\rEpoch %d: \t[%s%s] %d/%d Loss: %f" % (a, "="*perc, ' '*(50-perc), ind, total, total_loss/(ind+batch_size)))
             total_loss+=(l)
