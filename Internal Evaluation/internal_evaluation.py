@@ -9,6 +9,7 @@ import sys
 from collections import Counter
 
 embedding_name = sys.argv[1]
+print(embedding_name)
 net_type = embedding_name.split("_")[1]
 
 if net_type=='snn':
@@ -16,11 +17,12 @@ if net_type=='snn':
     k = int(embedding_name.split("_")[3])
     embedding_length = int(embedding_name.split("_")[4].split('-')[0])
 else:
-    layer = int(embedding_name.split("_")[2].split('-')[0])
-    neuron = int(embedding_name.split("_")[3].split('-')[0])
-    embedding_length = int(embedding_name.split("_")[4].split('-')[0])
-    dropout = int(embedding_name.split("_")[5].split('-')[0])
+    layer = int(embedding_name.split("_")[2])
+    neuron = int(embedding_name.split("_")[3])
+    embedding_length = int(embedding_name.split("_")[4])
+    dropout = float(embedding_name.split("_")[5])
     samples_per_pert = int(embedding_name.split("_")[4].split('-')[0])
+    print(layer, neuron, embedding_length, dropout, samples_per_pert)
 
 embeddings = pd.read_csv('../Embeddings/' + embedding_name)
 # print(embeddings.head())
@@ -120,7 +122,7 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
         dropout) + '_' + str(samples_per_pert)
     else:
         graphname = "AUC"+embedding_name[3:]
-    plt.savefig("../Results/" + graphname)
+    plt.savefig("../Results/" + graphname + ".png")
     plt.clf()
     if printinfo:
         #		 plt.figure(figsize=[20,6])
@@ -151,7 +153,7 @@ for a in imp_q:
 all_outputs['median'] = []
 all_outputs['auc'] = []
 
-test_cases = 500
+test_cases = 5
 
 # printinfo = true
 for a in range(test_cases):

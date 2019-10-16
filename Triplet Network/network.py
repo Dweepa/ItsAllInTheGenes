@@ -19,9 +19,9 @@ from data import *
 - epoch: 50, 75, 100, 200
 - (densenet param: subject to results)
 - embedding name
-
-sys arguments: layer neuron emb_len dropout epoch embname
 '''
+
+
 class siamese:
 
     # Create model
@@ -56,8 +56,8 @@ class siamese:
             name = "fc" + str(l)
             fc1 = self.fc_layer(input, neuron, name)
             ac1 = tf.nn.relu(fc1)
-            d1 = tf.nn.dropout(ac1, dropout)
             if (dropout):
+                d1 = tf.nn.dropout(ac1, dropout)
                 input = d1
             else:
                 input = ac1
@@ -126,7 +126,7 @@ class siamese:
 
 
 def run_network(input):
-    print(input)
+    # print(input)
     # initialise variables
     model_name = input["model_name"]
     emb_name = input["emb_name"]
@@ -179,9 +179,9 @@ def run_network(input):
             print("%2.3f\t%2.3f\t\t%2.3f\t%2.3f" % (p_loss[-1], n_loss[-1], train_acc, test_acc))
 
             if a % saving_multiple == 0:
-                saver.save(session, '../../Models/' + model_name + "/" + model_name, global_step=a)
+                saver.save(session, '../Models/' + model_name + "/" + model_name, global_step=a)
 
-        saver.save(session, '../../Models/' + model_name + "/" + model_name, global_step=epoch)
+        saver.save(session, '../Models/' + model_name + "/" + model_name, global_step=epoch)
         print("==== Saved Model")
 
         # Get embeddings
@@ -193,7 +193,7 @@ def run_network(input):
         full_dataset_embeddings = session.run([s.o1], feed_dict={s.x1: full.iloc[:, 0:978]})
 
         train_pert, test_pert = train_and_test_perturbagens(all_pert, 95)
-        train_data, _, test_data, _ = generate_data(full, train_pert, test_pert)
+        train_data, _, test_data, y_test = generate_data_2(full, train_pert, test_pert)
 
         # train_embedding
         train_embeddings = session.run([s.o1], feed_dict={s.x1: train_data})
@@ -202,11 +202,11 @@ def run_network(input):
         test_embeddings = session.run([s.o1], feed_dict={s.x1: test_data})
 
         # Save Embeddings
-        embfile = "../../Embeddings/" + emb_name
+        embfile = "../Embeddings/" + emb_name
         cols = ['e' + str(a) for a in range(1, len(full_dataset_embeddings[0][0]) + 1)]
         # print(cols)
-        e = pd.DataFrame(full_dataset_embeddings[0], columns=cols)
-        e['pert_id'] = list(full.target)
+        e = pd.DataFrame(test_embeddings[0], columns=cols)
+        e['pert_id'] = list(y_test)
         # print(e.head())
         e.to_csv(embfile)
         print("==== Saved Embedding")

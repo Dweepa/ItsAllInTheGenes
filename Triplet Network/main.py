@@ -11,7 +11,6 @@ from network import *
 from data import *
 import os
 
-
 '''
 - loss = cosine, problem with euclidean
 - net = Vanilla/Denset
@@ -39,14 +38,14 @@ model_name = "MOD_triplet_" + str(layer) + "_" + str(neuron) + "_" + str(emb_len
              + "_" + str(dropout) + "_" + str(samples_per_pert)
 embedding_name = "EMB_triplet_" + str(layer) + "_" + str(neuron) + "_" + str(emb_len) \
                  + "_" + str(dropout) + "_" + str(samples_per_pert)
-if (os.path.exists('../../Models/' + model_name) == 0):
-    os.mkdir('../../Models/' + model_name)
+if (os.path.exists('../Models/' + model_name) == 0):
+    os.mkdir('../Models/' + model_name)
 
 # Load necessary files
-full = pickle.load(open('../../Data/full', 'rb'))
-dbfile = open('../../Data/test_perts', 'rb')
+full = pickle.load(open('../Data/full', 'rb'))
+dbfile = open('../Data/test_perts', 'rb')
 test_pert = pickle.load(dbfile)
-dbfile = open('../../Data/train_perts', 'rb')
+dbfile = open('../Data/train_perts', 'rb')
 train_pert = pickle.load(dbfile)
 dbfile.close()
 
@@ -54,10 +53,10 @@ dbfile.close()
 all_pert = np.concatenate((train_pert, test_pert))
 
 # Testing on unseen perturbagens
-epoch = 200
+epoch = 30
 s = siamese("cos", "net", layer, neuron, emb_len, dropout)
 print("= Created Model")
-split = 95
+split = 90
 X, test = get_data(full, all_pert[0:30], samples_per_pert, split)
 print(X.shape, test.shape)
 print("== Got Data")
@@ -72,12 +71,4 @@ for i in range(len(input_list)):
 # Run network
 results = run_network(input_dict)
 
-print("===== Results")
-print("Testing on unseen perturbagens: Cosine distance")
-p = np.sum(results["train_loss"][0][2] <= 0.5)
-n = np.sum(trained[0][3] > 0.5)
-print("Training Accuracy", (p + n) / len(X[0]) / 2)
-
-p = np.sum(results["test_loss"][0][2] <= 0.5)
-n = np.sum(pred[0][3] > 0.5)
-print("Testing Accuracy", (p + n) / len(test[0]) / 2)
+print("===== Done")

@@ -73,7 +73,7 @@ def generate_triplets(data_same, data_diff):
 def generate_data(bigdata, test_pert, lenperpert, dim=978):
     data = bigdata[bigdata.isin({"target": test_pert})['target'] == True]
     batch_size = len(test_pert) * lenperpert
-    print("batch_size: ", batch_size)
+    # print("batch_size: ", batch_size)
     triplets = [np.zeros((batch_size, dim)) for i in range(3)]
     i = 0
     for pert in test_pert:
@@ -90,9 +90,18 @@ def generate_data(bigdata, test_pert, lenperpert, dim=978):
     return np.asarray(triplets)
 
 
+def generate_data_2(bigdata, train_pert, test_pert):
+    X_train = bigdata[bigdata.isin({"target": train_pert})['target'] == True]
+    y_train = X_train.target
+    X_test = bigdata[bigdata.isin({"target": test_pert})['target'] == True]
+    y_test = X_test.target
+    return np.asarray(X_train.iloc[:, 0:978]), np.asarray(y_train), np.asarray(X_test.iloc[:, 0:978]), np.asarray(
+        y_test)
+
+
 def get_data(bigdata, all_pert, samples_per_pert, split):
-    train_data = '../../Data/X_train_triplet_' + str(samples_per_pert)
-    test_data = '../../Data/X_test_triplet_' + str(samples_per_pert)
+    train_data = '../Data/X_train_triplet_' + str(samples_per_pert)
+    test_data = '../Data/X_test_triplet_' + str(samples_per_pert)
     try:
         X = pickle.load(open(train_data, 'rb'))
         test = pickle.load(open(test_data, 'rb'))
