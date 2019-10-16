@@ -45,8 +45,6 @@ os.mkdir('../Models/'+model_name)
 # print("Loaded Modules")
 # print("Loading Data")
 data = pickle.load(open('../Data/full', 'rb'))
-# print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
-
 X = data.loc[:, '780':'79716']
 y = list(data['target'])
 
@@ -138,8 +136,8 @@ with tf.Session() as session:
         for ind in range(0, total, batch_size):
             sys.stdout.flush()
             perc = math.ceil(50*(ind/total))
-            feed_dict[original_input] = X.iloc[order[ind:ind+batch_size]]
-            feed_dict[labels] = [y[a] for a in order[ind:ind+batch_size]]
+            feed_dict[original_input] = X_train.iloc[order[ind:ind+batch_size]]
+            feed_dict[labels] = [y_train[a] for a in order[ind:ind+batch_size]]
             _, l = session.run([optimizer, loss], feed_dict=feed_dict)
             sys.stdout.write("\rEpoch %d: \t[%s%s] %d/%d Loss: %f" % (a, "="*perc, ' '*(50-perc), ind, total, total_loss/(ind+batch_size)))
             total_loss+=(l)
