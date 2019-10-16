@@ -135,7 +135,8 @@ def run_network(input):
     X = input["X_train"]
     test = input["X_test"]
     full = input["full"]
-    all_pert = input["all_pert"]
+    test_pert = input["test_pert"]
+    train_pert = input["train_pert"]
 
     print("=== Running Network")
     saver = tf.train.Saver(max_to_keep=4)
@@ -191,8 +192,6 @@ def run_network(input):
 
         # full_embedding
         full_dataset_embeddings = session.run([s.o1], feed_dict={s.x1: full.iloc[:, 0:978]})
-
-        train_pert, test_pert = train_and_test_perturbagens(all_pert, 95)
         train_data, _, test_data, y_test = generate_data_2(full, train_pert, test_pert)
 
         # train_embedding

@@ -153,7 +153,7 @@ for a in imp_q:
 all_outputs['median'] = []
 all_outputs['auc'] = []
 
-test_cases = 5
+test_cases = 500
 
 # printinfo = true
 for a in range(test_cases):

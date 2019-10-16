@@ -51,19 +51,20 @@ dbfile.close()
 
 # List of all perturbagens
 all_pert = np.concatenate((train_pert, test_pert))
+split = 90
+train_pert, test_pert  = train_and_test_perturbagens(all_pert, split)
 
 # Testing on unseen perturbagens
-epoch = 30
+epoch = 300
 s = siamese("cos", "net", layer, neuron, emb_len, dropout)
 print("= Created Model")
-split = 90
-X, test = get_data(full, all_pert[0:30], samples_per_pert, split)
+X, test = get_data(full, train_pert, test_pert, samples_per_pert)
 print(X.shape, test.shape)
 print("== Got Data")
 
 # create argument dictionary
-input_list = ["model_name", "emb_name", "siamese", "epoch", "X_train", "X_test", "full", "all_pert"]
-arguments_list = [model_name, embedding_name, s, epoch, X, test, full, all_pert]
+input_list = ["model_name", "emb_name", "siamese", "epoch", "X_train", "X_test", "full", "train_pert","test_pert"]
+arguments_list = [model_name, embedding_name, s, epoch, X, test, full, train_pert, test_pert]
 input_dict = dict()
 for i in range(len(input_list)):
     input_dict[input_list[i]] = arguments_list[i]
