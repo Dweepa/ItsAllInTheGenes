@@ -16,7 +16,7 @@ do
 	do
 		echo ""
 		echo "Creating Models for MOD_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}"
-		sudo python3 SNN.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]}
+		sudo python3 SNN.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} 10 2
 
 		for k in $(seq 0 $epoch_len)
 		do

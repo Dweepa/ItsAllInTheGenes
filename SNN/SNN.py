@@ -39,6 +39,8 @@ pickle.dump(y_test, open('../Data/SNN_temp_y_test', 'wb'))
 n_layers = int(sys.argv[1])
 n_units = int(sys.argv[2])
 embedding_length = int(sys.argv[3])
+epochs = int(sys.argv[4])
+saving_multiple = int(sys.argv[5])
 model_name = "MOD_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 
 os.mkdir('../Models/'+model_name)
@@ -68,12 +70,12 @@ input_size = 978
 n_classes = 2170
 # n_units = 21
 batch_size = 3000
-epochs = 100
+# epochs = 100
 learning_rate = 0.005
 
 # embedding_length = 32
 number_of_samples = 300
-saving_multiple = 25
+# saving_multiple = 25
 
 # print("Creating tensorflow graph")
 tf.reset_default_graph()
