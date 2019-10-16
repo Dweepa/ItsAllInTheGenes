@@ -53,7 +53,7 @@ dbfile.close()
 all_pert = np.concatenate((train_pert, test_pert))
 
 # Testing on unseen perturbagens
-epoch = 30
+epoch = 300
 s = siamese("cos", "net", layer, neuron, emb_len, dropout)
 print("= Created Model")
 split = 90
