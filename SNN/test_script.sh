@@ -3,7 +3,7 @@
 depths=(4 8 16 24 32 4 8 16 24 32 4 8 16 24 32 4 8 16 24 32)
 k_val=(25 12 6 4 3 48 24 12 8 6 90 44 22 15 11 128 63 31 21 15)
 embedding_lengths=(8 16 32)
-epochs=(6 8 10)
+epochs=(50 75 100)
 
 
 d_len=$((${#depths[@]}-1))
@@ -16,7 +16,7 @@ do
 	do
 		echo ""
 		echo "Creating Models for MOD_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}"
-		python3 SNN.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} 10 2
+		python3 SNN.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} 100 25
 
 		for k in $(seq 0 $epoch_len)
 		do
