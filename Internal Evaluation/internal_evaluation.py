@@ -115,8 +115,11 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
     # plt.show()
 
     # TODO: figure out how to index auc graphs by test cases
-    graphname = "AUC_" + net_type + "_" + str(layer) + '_' + str(neuron) + '_' + str(embedding_length) + '_' + str(
+    if net_type=='triplet':
+        graphname = "AUC_" + net_type + "_" + str(layer) + '_' + str(neuron) + '_' + str(embedding_length) + '_' + str(
         dropout) + '_' + str(samples_per_pert)
+    else:
+        graphname = "AUC"+embedding_name[3:]
     plt.savefig("../Results/" + graphname)
     plt.clf()
     if printinfo:
