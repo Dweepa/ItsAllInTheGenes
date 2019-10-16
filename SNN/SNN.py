@@ -24,7 +24,7 @@ train_pert = pickle.load(open('../Data/train_perts', 'rb'))
 all_pert = np.concatenate((train_pert, test_pert))
 
 # Get train and test perturbagen
-train_pert, test_pert = train_and_test_perturbagens(all_pert, 95)
+train_pert, test_pert = train_and_test_perturbagens(all_pert, 90)
 
 # Generate Data
 X_train, y_train, X_test, y_test = generate_data(full, train_pert, test_pert)
