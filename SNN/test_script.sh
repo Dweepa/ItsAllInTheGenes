@@ -16,16 +16,16 @@ do
 	do
 		# echo ""
 		# echo "Creating Models for MOD_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}"
-		sudo python3 SNN.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} 100 25
+		# python3 SNN.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} 100 25
 
 		for k in $(seq 0 $epoch_len)
 		do
 			# echo ""
 			# echo "Saving Embeddings for MOD_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}"
-			sudo python3 save_embeddings.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} 0 ${epochs[$k]}
+			# python3 save_embeddings.py ${depths[$i]} ${k_val[$i]} ${embedding_lengths[$j]} 0 ${epochs[$k]}
 			# echo ""
 			echo "Performing Internal Evaluation for EMB_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}"
-			# sudo python3 ../Internal\ Evaluation/internal_evaluation.py EMB_snn_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
+			# python3 ../Internal\ Evaluation/internal_evaluation.py EMB_snn_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
 		done
 	done
 done
