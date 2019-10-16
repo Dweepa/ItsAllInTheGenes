@@ -33,10 +33,10 @@ do
 	        do
 	          echo ""
             echo "Saving Embeddings for MOD_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}-${epochs[$k]}"
-            python main.py ${layer[$lay]} ${neuron[$neu]} ${embedding_lengths[$emb]} ${dropout[$drop]} ${samples_per_pert[$sample]}
+            python3 main.py ${layer[$lay]} ${neuron[$neu]} ${embedding_lengths[$emb]} ${dropout[$drop]} ${samples_per_pert[$sample]}
             echo ""
             echo "Performing Internal Evaluation for EMB_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}"
-            python ../../Internal\ Evaluation/internal_evaluation.py EMB_triplet_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
+            python3 ../../Internal\ Evaluation/internal_evaluation.py EMB_triplet_${depths[$i]}_${k_val[$i]}_${embedding_lengths[$j]}-${epochs[$k]}
           done
 
         done

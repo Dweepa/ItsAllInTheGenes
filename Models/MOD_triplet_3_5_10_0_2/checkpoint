@@ -1,0 +1,5 @@
+model_checkpoint_path: "MOD_triplet_3_5_10_0_2-200"
+all_model_checkpoint_paths: "MOD_triplet_3_5_10_0_2-50"
+all_model_checkpoint_paths: "MOD_triplet_3_5_10_0_2-100"
+all_model_checkpoint_paths: "MOD_triplet_3_5_10_0_2-150"
+all_model_checkpoint_paths: "MOD_triplet_3_5_10_0_2-200"

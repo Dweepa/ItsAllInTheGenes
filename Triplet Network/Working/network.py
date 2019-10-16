@@ -8,6 +8,7 @@ import time
 from sklearn.model_selection import train_test_split
 import random
 import pandas as pd
+from data import *
 
 '''
 - loss = cosine, problem with euclidean
@@ -21,9 +22,6 @@ import pandas as pd
 
 sys arguments: layer neuron emb_len dropout epoch embname
 '''
-
-
-
 class siamese:
 
     # Create model
@@ -52,6 +50,8 @@ class siamese:
             self.loss = self.loss_with_euclid()
 
     def normalnet(self, x, num_layers, neuron, emb_len, dropout):
+
+        # TODO: fix the damn network
         input = x
         for l in range(num_layers):
             name = "fc" + str(l)
@@ -67,20 +67,23 @@ class siamese:
         fc_last = tf.nn.l2_normalize(fc_last, axis=1)
         return fc_last
 
-        '''
-        fc1 = self.fc_layer(x, 1024, "fc1")
-        ac1 = tf.nn.relu(fc1)
-        d1 = tf.nn.dropout(ac1, 0.5)
+        # fc1 = self.fc_layer(x, 1024, "fc1")
+        # ac1 = tf.nn.relu(fc1)
+        # d1 = tf.nn.dropout(ac1, 0.5)
+        #
+        # fc2 = self.fc_layer(ac1, 1024, "fc2")
+        # ac2 = tf.nn.relu(fc2)
+        # d2 = tf.nn.dropout(ac2, 0.5)
+        #
+        # fc3 = self.fc_layer(ac2, 1024, "fc3")
+        # ac3 = tf.nn.relu(fc3)
+        # d3 = tf.nn.dropout(ac3, 0.5)
+        #
+        # fc_last = self.fc_layer(ac3, emb_len, "fc_embedding")
+        # fc_last = tf.nn.l2_normalize(fc_last, axis=1)
+        # return fc_last
 
-        fc2 = self.fc_layer(ac1, 1024, "fc2")
-        ac2 = tf.nn.relu(fc2)
-        d2 = tf.nn.dropout(ac2, 0.5)
-
-        fc3 = self.fc_layer(ac2, 1024, "fc3")
-        ac3 = tf.nn.relu(fc3)
-        d3 = tf.nn.dropout(ac3, 0.5)
-        '''
-
+    # TODO: fill up densenet
     def dense_network(self, x, num_layers, neuron, emb_len, dropout):
         fc1 = self.fc_layer(x, 400, "fc1")
         ac1 = tf.nn.relu(fc1)
@@ -132,15 +135,25 @@ class siamese:
         return eucd2_mean, eucd3_mean, eucd2, eucd3
 
 
-# TODO: consistency in results
 '''
-- Median 
+- Median
 - AUC (write code)
 - Top-x recall
 '''
 
 
-def run_network(model_name, emb_name, s, epoch, X, test, full):
+def run_network(input):
+    print(input)
+    # initialise variables
+    model_name = input["model_name"]
+    emb_name = input["emb_name"]
+    s = input["siamese"]
+    epoch = input["epoch"]
+    X = input["X_train"]
+    test = input["X_test"]
+    full = input["full"]
+    all_pert = input["all_pert"]
+
     print("=== Running Network")
     saver = tf.train.Saver(max_to_keep=4)
     saving_multiple = 50
@@ -181,9 +194,6 @@ def run_network(model_name, emb_name, s, epoch, X, test, full):
             test_acc_l.append(test_acc)
 
             print("%2.3f\t%2.3f\t\t%2.3f\t%2.3f" % (p_loss[-1], n_loss[-1], train_acc, test_acc))
-            # print("\rEpoch {a}:\t{'{0:.4f}'.format(p_loss[-1])}\t{'{0:.4f}'.format(n_loss[-1])}\t\t{'{
-            # 0:.2f}'.format(train_acc)}\t{'{0:.2f}'.format(test_acc)}") sys.stdout.write("\rEpoch {0}:\t{0:.4f}\t{
-            # 0:.4f}\t\t{0:.2f}\t{0:.2f}".format(a, p_loss[-1], n_loss[-1], train_acc,test_acc))
 
             if a % saving_multiple == 0:
                 saver.save(session, '../../Models/' + model_name + "/" + model_name, global_step=a)
@@ -196,10 +206,20 @@ def run_network(model_name, emb_name, s, epoch, X, test, full):
         trained = session.run([s.loss], feed_dict={s.x1: X[0], s.x2: X[1], s.x3: X[2]})
         pred = session.run([s.loss], feed_dict={s.x1: test[0], s.x2: test[1], s.x3: test[2]})
 
-        # Get embeddings for all queries and save embeddings
+        # full_embedding
         full_dataset_embeddings = session.run([s.o1], feed_dict={s.x1: full.iloc[:, 0:978]})
-        # print(len(full_dataset_embeddings),full_dataset_embeddings[0].shape)
-        embfile = "../../Embeddings/" + emb_name + ".csv"
+
+        train_pert, test_pert = train_and_test_perturbagens(all_pert, 95)
+        train_data, _, test_data, _ = generate_data(full, train_pert, test_pert)
+
+        # train_embedding
+        train_embeddings = session.run([s.o1], feed_dict={s.x1: train_data})
+
+        # test_embedding
+        test_embeddings = session.run([s.o1], feed_dict={s.x1: test_data})
+
+        # Save Embeddings
+        embfile = "../../Embeddings/" + emb_name
         cols = ['e' + str(a) for a in range(1, len(full_dataset_embeddings[0][0]) + 1)]
         # print(cols)
         e = pd.DataFrame(full_dataset_embeddings[0], columns=cols)
@@ -208,7 +228,19 @@ def run_network(model_name, emb_name, s, epoch, X, test, full):
         e.to_csv(embfile)
         print("==== Saved Embedding")
 
-        return full_dataset_embeddings, embeddings, trained, pred, p_loss, n_loss, train_acc_l, test_acc_l
+        # Return Dictionary
+        return_dict = dict()
+        return_dict["full_embedding"] = full_dataset_embeddings
+        return_dict["train_embedding"] = train_embeddings
+        return_dict["test_embedding"] = test_embeddings
+        return_dict["train_loss"] = trained
+        return_dict["test_loss"] = pred
+        return_dict["p_loss"] = p_loss
+        return_dict["n_loss"] = n_loss
+        return_dict["train_acc"] = train_acc_l
+        return_dict["test_acc"] = test_acc_l
+
+        return return_dict
 
 
 def graph(epoch, p_loss, n_loss, train_acc_l=None, test_acc_l=None):
