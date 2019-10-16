@@ -15,7 +15,7 @@ from data import *
 # parameters modelname d k embeddingname embedding_length
 # python3 SNN.py 
 
-
+# -- Dweepa Code ----
 full = pickle.load(open('../Data/full', 'rb'))
 test_pert = pickle.load(open('../Data/test_perts', 'rb'))
 train_pert = pickle.load(open('../Data/train_perts', 'rb'))
@@ -29,6 +29,8 @@ train_pert, test_pert = train_and_test_perturbagens(all_pert, 95)
 # Generate Data
 X_train, y_train, X_test, y_test = generate_data(full, train_pert, test_pert)
 print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+# --- End of Dweepa Code ----
+
 
 n_layers = int(sys.argv[1])
 n_units = int(sys.argv[2])
