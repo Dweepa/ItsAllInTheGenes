@@ -28,7 +28,10 @@ train_pert, test_pert = train_and_test_perturbagens(all_pert, 95)
 
 # Generate Data
 X_train, y_train, X_test, y_test = generate_data(full, train_pert, test_pert)
-print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+# print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+
+pickle.dump(X_test, open('../Data/SNN_temp_X_test', 'wb'))
+pickle.dump(y_test, open('../Data/SNN_temp_y_test', 'wb'))
 # --- End of Dweepa Code ----
 
 
@@ -54,11 +57,11 @@ for a in range(len(y)):
         num+=1
     y[a] = pert_dict[y[a]]
 
-X = X[:100]
-y = np.asarray(y[:100]).flatten()
+# X = X[:100]
+# y = np.asarray(y[:100]).flatten()
 # y_small
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 input_size = 978
 # n_layers = 16
@@ -117,7 +120,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 # print("Graph generated")
 saver = tf.train.Saver(max_to_keep=3)
 with tf.Session() as session:    
-    feed_dict={original_input:X, labels: y, margin: m}    
+    feed_dict={original_input:X_train, labels: y_train, margin: m}    
     
     alpha_initial.initializer.run()
     tf.initialize_all_variables().run()
