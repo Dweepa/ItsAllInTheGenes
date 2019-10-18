@@ -22,39 +22,41 @@ from data import *
 '''
 
 
-class siamese:
-
-    # Create model
-    def __init__(self, loss='cos', network='net', num_layers=10, neuron=100, emb_len=32, dropout=0):
+def siamese(num_layers=10, neuron=100, emb_len=32, dropout=0):
         tf.reset_default_graph()
 
-        self.x1 = tf.placeholder(tf.float32, [None, 978], "input1")
-        self.x2 = tf.placeholder(tf.float32, [None, 978], "input2")
-        self.x3 = tf.placeholder(tf.float32, [None, 978], "input3")
+        x1 = tf.placeholder(tf.float32, [None, 978], "input1")
+        x2 = tf.placeholder(tf.float32, [None, 978], "input2")
+        x3 = tf.placeholder(tf.float32, [None, 978], "input3")
 
-        if network == 'net':
-            self.network = self.normalnet
-        if network == 'densenet':
-            self.network = self.dense_network
-
+        tf.layers.Dense(x1,5,"relu")
         with tf.variable_scope("siamese") as scope:
-            self.o1 = self.network(self.x1, num_layers, neuron, emb_len, dropout)
+            o1 = network(x1, num_layers, neuron, emb_len, dropout)
             scope.reuse_variables()
-            self.o2 = self.network(self.x2, num_layers, neuron, emb_len, dropout)
+            o2 = network(x2, num_layers, neuron, emb_len, dropout)
             scope.reuse_variables()
-            self.o3 = self.network(self.x3, num_layers, neuron, emb_len, dropout)
+            o3 = network(x3, num_layers, neuron, emb_len, dropout)
 
-        if loss == 'cos':
-            self.loss = self.loss_with_cosine()
-        if loss == 'euc':
-            self.loss = self.loss_with_euclid()
+        loss = loss_with_cosine(o1,o2,o3)
 
-    def normalnet(self, x, num_layers, neuron, emb_len, dropout):
+        return o1,o2,o3,loss
 
+def loss_with_cosine(o1, o2, o3):
+     cos2 = tf.multiply(o1, o2)
+     cos2 = 1 - tf.pow(tf.reduce_sum(cos2, axis=1), 2)
+     cos2_mean = tf.reduce_mean(cos2, axis=0)
+
+     cos3 = tf.multiply(o1, o3)
+     cos3 = 1 - tf.pow(tf.reduce_sum(cos3, axis=1), 2)
+     cos3_mean = tf.reduce_mean(cos3, axis=0)
+
+     return cos2_mean, cos3_mean, cos2, cos3
+
+def network(x, num_layers, neuron, emb_len, dropout):
         input = x
         for l in range(num_layers):
             name = "fc" + str(l)
-            fc1 = self.fc_layer(input, neuron, name)
+            fc1 = tf.layers.Dense(input,neuron,'relu',name)
             ac1 = tf.nn.relu(fc1)
             if (dropout):
                 d1 = tf.nn.dropout(ac1, dropout)
@@ -62,60 +64,9 @@ class siamese:
             else:
                 input = ac1
 
-        fc_last = self.fc_layer(input, emb_len, "fc_embedding")
+        fc_last = tf.layers.Dense(input, emb_len, "fc_embedding")
         fc_last = tf.nn.l2_normalize(fc_last, axis=1)
         return fc_last
-
-    # TODO: fill up densenet
-    def dense_network(self, x, num_layers, neuron, emb_len, dropout):
-        fc1 = self.fc_layer(x, 400, "fc1")
-        ac1 = tf.nn.relu(fc1)
-        op_concat1 = tf.concat([x, ac1], axis=1)
-
-        fc2 = self.fc_layer(op_concat1, 400, "fc2")
-        ac2 = tf.nn.relu(fc2)
-        op_concat2 = tf.concat([op_concat1, ac2], axis=1)
-
-        fc3 = self.fc_layer(op_concat2, 400, "fc3")
-        ac3 = tf.nn.relu(fc3)
-        op_concat3 = tf.concat([op_concat2, ac3], axis=1)
-
-        fc4 = self.fc_layer(op_concat3, 32, "fc4")
-
-        fc4 = tf.nn.l2_normalize(fc4, axis=1)
-        return fc4
-
-    def fc_layer(self, bottom, n_weight, name):
-        assert len(bottom.get_shape()) == 2
-        n_prev_weight = bottom.get_shape()[1]
-        initer = tf.truncated_normal_initializer(stddev=0.01)
-        W = tf.get_variable(name + 'W', dtype=tf.float32, shape=[n_prev_weight, n_weight], initializer=initer)
-        b = tf.get_variable(name + 'b', dtype=tf.float32,
-                            initializer=tf.constant(0.01, shape=[n_weight], dtype=tf.float32))
-        fc = tf.nn.bias_add(tf.matmul(bottom, W), b)
-        return fc
-
-    def loss_with_euclid(self):
-        eucd2 = tf.pow(tf.subtract(self.o1, self.o2), 2)
-        eucd2 = tf.sqrt(tf.reduce_sum(eucd2, axis=1))
-        eucd2_mean = tf.reduce_mean(eucd2, axis=0)
-
-        eucd3 = tf.pow(tf.subtract(self.o1, self.o3), 2)
-        eucd3 = tf.sqrt(tf.reduce_sum(eucd3, axis=1))
-        eucd3_mean = tf.reduce_mean(eucd3, axis=0)
-
-        return eucd2_mean, eucd3_mean, eucd2, eucd3
-
-    def loss_with_cosine(self):
-        eucd2 = tf.multiply(self.o1, self.o2)
-        eucd2 = 1 - tf.pow(tf.reduce_sum(eucd2, axis=1), 2)
-        eucd2_mean = tf.reduce_mean(eucd2, axis=0)
-
-        eucd3 = tf.multiply(self.o1, self.o3)
-        eucd3 = 1 - tf.pow(tf.reduce_sum(eucd3, axis=1), 2)
-        eucd3_mean = tf.reduce_mean(eucd3, axis=0)
-
-        return eucd2_mean, eucd3_mean, eucd2, eucd3
 
 
 '''

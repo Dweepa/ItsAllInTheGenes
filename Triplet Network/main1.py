@@ -8,6 +8,7 @@ import time
 from sklearn.model_selection import train_test_split
 import random
 
+# TODO: change to network
 from network import *
 from data import *
 import os
@@ -49,6 +50,8 @@ test_pert = pickle.load(dbfile)
 dbfile = open('../Data/train_perts', 'rb')
 train_pert = pickle.load(dbfile)
 dbfile.close()
+
+
 
 # List of all perturbagens
 all_pert = np.concatenate((train_pert, test_pert))
