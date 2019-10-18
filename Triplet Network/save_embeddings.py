@@ -12,13 +12,16 @@ neuron = int(sys.argv[2])
 emb_len = int(sys.argv[3])
 dropout = float(sys.argv[4])
 samples_per_pert = int(sys.argv[5])
-only_test = bool(sys.argv[6])
+only_test = int(sys.argv[6])
 epochs = [int(a) for a in sys.argv[7:]]
 
 model_name = "MOD_triplet_" + str(layer) + "_" + str(neuron) + "_" + str(emb_len) + "_" + str(dropout) + "_" + str(
     samples_per_pert)
 embedding_name = "EMB_triplet_" + str(layer) + "_" + str(neuron) + "_" + str(emb_len) + "_" + str(dropout) + "_" + str(
     samples_per_pert)
+
+print(model_name, embedding_name, only_test)
+
 
 embedding_length = emb_len
 
@@ -29,8 +32,11 @@ def save_embeddings(X, y, model_name, epoch):
         saver = tf.train.import_meta_graph('../Models/' + model_name + '/' + model_name + '-' + str(epoch) + '.meta')
         saver.restore(session, '../Models/' + model_name + '/' + model_name + '-' + str(epoch))
         graph = tf.get_default_graph()
-        original_input = graph.get_tensor_by_name('gene_expression:0')
-        norm_embeddings = graph.get_tensor_by_name('norm_embeddings:0')
+        print([n.name for n in tf.get_default_graph().as_graph_def().node if(n.name=="siamese/fc_normal")])
+        # print(tf.all_variables())
+        original_input = graph.get_tensor_by_name('input1:0')
+        norm_embeddings = graph.get_tensor_by_name('siamese/fc_normal:0')
+
         # print("Loaded "+model_name+"-"+str(epoch))
         for a in range(len(X)):
             if a % 1000 == 0:
@@ -50,9 +56,9 @@ def save_embeddings(X, y, model_name, epoch):
 
 # print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
 
-if only_test == True:
-    X = pickle.load(open('../Data/SNN_temp_X_test', 'rb'))
-    y = pickle.load(open('../Data/SNN_temp_y_test', 'rb'))
+if only_test == 1:
+    X = pickle.load(open('../Data/SNN_triplet_X_test', 'rb'))
+    y = pickle.load(open('../Data/SNN_triplet_y_test', 'rb'))
 
 else:
     data = pickle.load(open('../Data/full', 'rb'))

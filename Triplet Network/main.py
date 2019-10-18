@@ -7,6 +7,7 @@ from IPython.display import Audio, display
 import time
 from sklearn.model_selection import train_test_split
 import random
+
 from network import *
 from data import *
 import os
@@ -55,6 +56,7 @@ split = 90
 train_pert, test_pert  = train_and_test_perturbagens(all_pert, split)
 
 # Testing on unseen perturbagens
+# TODO: change this to 300
 epoch = 300
 s = siamese("cos", "net", layer, neuron, emb_len, dropout)
 print("= Created Model")
