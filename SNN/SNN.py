@@ -24,7 +24,7 @@ train_pert = pickle.load(open('../Data/train_perts', 'rb'))
 all_pert = np.concatenate((train_pert, test_pert))
 
 # Get train and test perturbagen
-train_pert, test_pert = train_and_test_perturbagens(all_pert, 90)
+train_pert, test_pert = train_and_test_perturbagens(all_pert, 100)
 
 # Generate Data
 X_train, y_train, X_test, y_test = generate_data(full, train_pert, test_pert)
@@ -43,7 +43,7 @@ epochs = int(sys.argv[4])
 saving_multiple = int(sys.argv[5])
 model_name = "MOD_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 
-os.mkdir('../Models/'+model_name)
+os.mkdir('../Models/Full_Data/'+model_name)
 
 # print("Loaded Modules")
 # print("Loading Data")
@@ -151,6 +151,6 @@ with tf.Session() as session:
     
     # tf.summary.FileWriter('./logs', session.graph)
         if a%saving_multiple==0:
-            saver.save(session, '../Models/'+model_name+"/"+model_name, global_step=a)
-    saver.save(session, '../Models/'+model_name+"/"+model_name, global_step=epochs)
+            saver.save(session, '../Models/Full_Data/'+model_name+"/"+model_name, global_step=a)
+    saver.save(session, '../Models/Full_Data/'+model_name+"/"+model_name, global_step=epochs)
 

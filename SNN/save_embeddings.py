@@ -23,8 +23,8 @@ print(embedding_name)
 def save_embeddings(X, y, model_name, epoch):
     embeddings = []
     with tf.Session() as session:
-        saver = tf.train.import_meta_graph('../Models/'+model_name+'/'+model_name+'-'+str(epoch)+'.meta')
-        saver.restore(session, '../Models/'+model_name+'/'+model_name+'-'+str(epoch))
+        saver = tf.train.import_meta_graph('../Models/Full_Data/'+model_name+'/'+model_name+'-'+str(epoch)+'.meta')
+        saver.restore(session, '../Models/Full_Data/'+model_name+'/'+model_name+'-'+str(epoch))
         graph = tf.get_default_graph()
         original_input = graph.get_tensor_by_name('gene_expression:0')
         norm_embeddings = graph.get_tensor_by_name('norm_embeddings:0')
@@ -36,7 +36,7 @@ def save_embeddings(X, y, model_name, epoch):
             curr_embedding = session.run([norm_embeddings], feed_dict=feed_dict)[0][0]
             embeddings.append(list(curr_embedding)+list([y[a]]))
         embeddings = pd.DataFrame(embeddings, columns=['e'+str(a) for a in range(1, embedding_length+1)]+['pert_id'])
-        embeddings.to_csv("../Embeddings/"+embedding_name+"-"+str(epoch))
+        embeddings.to_csv("../Embeddings/Full_Data/"+embedding_name+"-"+str(epoch))
         sys.stdout.write("\r%d/%d\nCompleted\n" % (len(X), len(X)))
 
 # print("Loaded Modules")
