@@ -32,14 +32,10 @@ def save_embeddings(X, y, model_name, epoch):
         saver = tf.train.import_meta_graph('../Models/' + model_name + '/' + model_name + '-' + str(epoch) + '.meta')
         saver.restore(session, '../Models/' + model_name + '/' + model_name + '-' + str(epoch))
         graph = tf.get_default_graph()
-        # print([n.name for n in tf.get_default_graph().as_graph_def().node])
-        print(tf.all_variables())
-        # original_input = graph.get_tensor_by_name('input:0')
-
-        W = graph.get_tensor_by_name('siamese/fc_embeddingW:0')
-        b = graph.get_tensor_by_name('siamese/fc_embeddingb:0')
-        fc = tf.nn.bias_add(tf.matmul(bottom, W), b)
-        norm_embeddings = graph.get_tensor_by_name('siamese/fc_embeddingW:0')
+        print([n.name for n in tf.get_default_graph().as_graph_def().node if(n.name=="siamese/fc_normal")])
+        # print(tf.all_variables())
+        original_input = graph.get_tensor_by_name('input1:0')
+        norm_embeddings = graph.get_tensor_by_name('siamese/fc_normal:0')
 
         # print("Loaded "+model_name+"-"+str(epoch))
         for a in range(len(X)):

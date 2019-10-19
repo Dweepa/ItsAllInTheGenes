@@ -63,7 +63,7 @@ class siamese:
                 input = ac1
 
         fc_last = self.fc_layer(input, emb_len, "fc_embedding")
-        fc_last = tf.nn.l2_normalize(fc_last, axis=1)
+        fc_last = tf.nn.l2_normalize(fc_last, axis=1, name = "fc_normal")
         return fc_last
 
     # TODO: fill up densenet
@@ -81,8 +81,7 @@ class siamese:
         op_concat3 = tf.concat([op_concat2, ac3], axis=1)
 
         fc4 = self.fc_layer(op_concat3, 32, "fc4")
-
-        fc4 = tf.nn.l2_normalize(fc4, axis=1)
+        fc4 = tf.nn.l2_normalize(fc4, axis=1,name = "fc_normal")
         return fc4
 
     def fc_layer(self, bottom, n_weight, name):
@@ -202,15 +201,15 @@ def run_network(input):
         # test_embedding
         test_embeddings = session.run([s.o1], feed_dict={s.x1: test_data})
 
-        # Save Embeddings
-        embfile = "../Embeddings/" + emb_name
-        cols = ['e' + str(a) for a in range(1, len(full_dataset_embeddings[0][0]) + 1)]
-        # print(cols)
-        e = pd.DataFrame(test_embeddings[0], columns=cols)
-        e['pert_id'] = list(y_test)
-        # print(e.head())
-        e.to_csv(embfile)
-        print("==== Saved Embedding")
+        # # Save Embeddings
+        # embfile = "../Embeddings/" + emb_name
+        # cols = ['e' + str(a) for a in range(1, len(full_dataset_embeddings[0][0]) + 1)]
+        # # print(cols)
+        # e = pd.DataFrame(test_embeddings[0], columns=cols)
+        # e['pert_id'] = list(y_test)
+        # # print(e.head())
+        # e.to_csv(embfile)
+        # print("==== Saved Embedding")
 
         # Return Dictionary
         return_dict = dict()

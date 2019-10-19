@@ -57,7 +57,7 @@ train_pert, test_pert  = train_and_test_perturbagens(all_pert, split)
 
 # Testing on unseen perturbagens
 # TODO: change this to 300
-epoch = 100
+epoch = 300
 s = siamese("cos", "net", layer, neuron, emb_len, dropout)
 print("= Created Model")
 X, test = get_data(full, train_pert, test_pert, samples_per_pert)

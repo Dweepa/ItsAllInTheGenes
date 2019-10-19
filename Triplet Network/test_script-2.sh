@@ -4,8 +4,8 @@ layer=(3 4 5)
 neuron=(256 512 1024)
 embedding_lengths=(8 16 32)
 dropout=(0.5 0.9)
-epochs=(75 100)
-samples_per_pert=(50 100)
+epochs=(50 100)
+samples_per_pert=(5 50 100)
 
 
 layer_len=$((${#layer[@]}-1))
@@ -28,16 +28,17 @@ do
 	        echo ""
 		      echo "Creating Models for MOD_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}"
 		      echo ""
-          echo "Saving Embeddings for MOD_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}"
           python main.py ${layer[$lay]} ${neuron[$neu]} ${embedding_lengths[$emb]} ${dropout[$drop]} ${samples_per_pert[$sample]}
 
 	        for ep in $(seq 0 $epoch_len)
-	        do
-	          echo ""
-            echo "Performing Internal Evaluation for EMB_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}"
-            python ../Internal\ Evaluation/internal_evaluation.py "EMB_triplet_${layer[$i]}_${neuron[$i]}_${embedding_lengths[$j]}_${dropout[$drop]}_${samples_per_pert[$sample]}"
+          do
+            echo ""
+            echo "Saving Embeddings for MOD_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}-${epochs[$ep]}"
+            python save_embeddings.py ${layer[$lay]} ${neuron[$neu]} ${embedding_lengths[$emb]} ${dropout[$drop]} ${samples_per_pert[$sample]} 0 ${epochs[$ep]}
+            echo ""
+            echo "Performing Internal Evaluation for EMB_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}-${epochs[$ep]}"
+            python ../Internal\ Evaluation/internal_evaluation.py EMB_triplet_${layer[$lay]}_${neuron[$neu]}_${embedding_lengths[$emb]}_${dropout[$drop]}_${samples_per_pert[$sample]}-${epochs[$ep]}
           done
-
         done
       done
     done
