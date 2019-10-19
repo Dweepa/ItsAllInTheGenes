@@ -15,6 +15,9 @@ epochs = [int(a) for a in sys.argv[5:]]
 model_name = "MOD_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 embedding_name =  "EMB_snn_"+str(n_layers)+"_"+str(n_units)+"_"+str(embedding_length)
 
+if only_test:
+    embedding_name+="_full"
+
 def save_embeddings(X, y, model_name, epoch):
     embeddings = []
     with tf.Session() as session:
