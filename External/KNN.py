@@ -9,7 +9,8 @@ from collections import Counter
 
 embedding_name = sys.argv[1]
 
-embedding_length = int(embedding_name.split("_")[4].split("-")[0])
+embedding_length = int(embedding_name.split("/")[-1].split("_")[4].split("-")[0])
+print(embedding_length)
 
 data = pd.read_csv(embedding_name)
 
@@ -28,16 +29,17 @@ all_embeddings = data[['e'+str(a) for a in range(1, embedding_length+1)]]
 
 perts = np.unique(data["pert_id"])
 pert_embeddings = {}
-pert_classes = {}
-
 
 for pert in perts:
 	embedding_coll = np.asarray(all_embeddings[data["pert_id"]==pert])
 	pert_embeddings[pert] = embedding_coll.mean(axis=0)
-	pert_class[pert] = data[pert]
+
+distribution = dict(Counter(data["pert_class"]))
+for key in distribution.keys():
+	distribution[key] = 1/distribution[key]
 
 
-def find(test_pert, pert_embeddings, pert_class, num):
+def find(test_pert, pert_embeddings, pert_class, num, use_all=False, distribution=None):
 	similarity = []
 	test_embedding = pert_embeddings[test_pert]
 
@@ -47,10 +49,42 @@ def find(test_pert, pert_embeddings, pert_class, num):
 
 	similarity.sort(reverse=True)
 
-	similar_perts = [pert_class[pert] for sim, pert in similarity[:num]]
+	if use_all==False: 
+		similar_perts = [pert_class[pert] for sim, pert in similarity[:num]]
+		new_similarity = Counter(similar_perts)
+		if distribution!=None:
+			for a in new_similarity.keys():
+				new_similarity[a] = new_similarity[a]*distribution[a]
+			# print(new_similarity)
+		return new_similarity.most_common()[0][0]
 
-	print(Counter(similar_perts))
+	else:
+		answer = []
+		for a in range(1, num+1):
+			similar_perts = [pert_class[pert] for sim, pert in similarity[:a]]
+			answer.append(Counter(similar_perts).most_common()[0][0])
+		return answer
 
 
+totry = 100
+accuracy = [0 for _ in range(totry)]
 
-find(perts[16], pert_embeddings, pert_class, 100)
+for num in range(0, len(perts)):
+	guesses = find(perts[num], pert_embeddings, pert_class, totry, True)
+	answer = pert_class[perts[num]]
+
+	for a in range(totry):
+		if guesses[a]==answer:
+			accuracy[a]+=1
+
+for a in range(totry):
+	print(a+1, accuracy[a]/len(perts))
+
+# total = 0
+# for num in range(0, len(perts)):
+# 	guess = find(perts[num], pert_embeddings, pert_class, 20, False)
+# 	answer = pert_class[perts[num]]
+# 	if guess==answer:
+# 		total+=1
+# 	# print(guess, answer)
+# print(total/len(perts))
