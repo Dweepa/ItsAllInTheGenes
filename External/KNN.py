@@ -6,6 +6,8 @@ from sklearn.metrics import roc_curve, roc_auc_score, auc
 import sklearn.metrics as metrics
 import sys
 from collections import Counter
+from scipy.spatial.distance import cosine
+
 
 embedding_name = sys.argv[1]
 
@@ -44,10 +46,12 @@ def find(test_pert, pert_embeddings, pert_class, num, use_all=False, distributio
 	test_embedding = pert_embeddings[test_pert]
 
 	for pert in pert_embeddings.keys():
+		if pert==test_pert:
+			continue
 		embedding = pert_embeddings[pert]
-		similarity.append((np.dot(test_embedding, embedding), pert))
+		similarity.append((cosine(test_embedding, embedding), pert))
 
-	similarity.sort(reverse=True)
+	similarity.sort(reverse=False)
 
 	if use_all==False: 
 		similar_perts = [pert_class[pert] for sim, pert in similarity[:num]]
@@ -55,7 +59,6 @@ def find(test_pert, pert_embeddings, pert_class, num, use_all=False, distributio
 		if distribution!=None:
 			for a in new_similarity.keys():
 				new_similarity[a] = new_similarity[a]*distribution[a]
-			# print(new_similarity)
 		return new_similarity.most_common()[0][0]
 
 	else:
@@ -86,5 +89,4 @@ for a in range(totry):
 # 	answer = pert_class[perts[num]]
 # 	if guess==answer:
 # 		total+=1
-# 	# print(guess, answer)
 # print(total/len(perts))
