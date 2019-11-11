@@ -10,7 +10,8 @@ from collections import Counter
 
 embedding_name = sys.argv[1]
 
-embedding_length = int(embedding_name.split("_")[4].split("-")[0])
+embedding_length = int(embedding_name.split("/")[-1].split("_")[4].split("-")[0])
+print(embedding_length)
 
 # data_array = normalize(np.random.rand(10000, embedding_length))
 # data = pd.DataFrame(data_array,	columns = ['e'+str(a+1) for a in range(embedding_length)])
@@ -30,7 +31,6 @@ for ind in external_data.index:
 	pert_class[external_data.id[ind]] = external_data.atc[ind][:1]
 
 data["pert_class"] = [pert_class[data.pert_id[ind]] for ind in data.index]
-print(data["pert_class"])
 # print(data.head())
 # print(len(data))
 
@@ -51,7 +51,7 @@ def external_evaluate(data, embedding_length, sample_size, number_test_cases):
 	all_outputs = {}
 	for key in all_keys:
 		all_outputs[key] = []
-
+	print("HELLo")
 	for a in range(number_test_cases):
 		output = [np.mean(all_outputs[key]) for key in all_keys]
 		sys.stdout.write("\r%d/%d AUC: %f Top-0.1: %f" % (a, number_test_cases, output[-1], output[-5]))

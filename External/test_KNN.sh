@@ -1,0 +1,22 @@
+#!/bin/bash
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_32_3_8_full-75
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_16_6_32_full-50
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_8_12_16_full-50
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_24_4_16_full-50
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_16_6_32_full-100
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_4_25_16_full-75
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_24_4_32_full-100
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_32_3_8_full-100
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_8_12_32_full-100
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_16_6_32_full-75
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_24_4_16_full-100
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_24_4_32_full-50
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_24_4_32_full-75
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_8_12_16_full-100
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_4_25_16_full-50
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_8_12_32_full-50
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_4_25_16_full-100
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_32_3_8_full-50
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_24_4_16_full-75
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_8_12_32_full-75
+python3 KNN.py ../../Embeddings/Full_Data/EMB_snn_8_12_16_full-75
