@@ -55,7 +55,7 @@ def save_embeddings(X, y, model_name, epoch):
 # data = pickle.load(open('../Data/full', 'rb'))
 
 # print(f"Data Loaded\nNumber of Columns: {len(data.columns)}\nNumber of Rows: {len(data)}")
-
+# TODO: change this to accomodate net
 if only_test == 1:
     X = pickle.load(open('../Data/SNN_triplet_X_test', 'rb'))
     y = pickle.load(open('../Data/SNN_triplet_y_test', 'rb'))
