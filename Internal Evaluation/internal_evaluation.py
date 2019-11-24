@@ -21,7 +21,7 @@ else:
     neuron = int(embedding_name.split("_")[3])
     embedding_length = int(embedding_name.split("_")[4])
     dropout = float(embedding_name.split("_")[5])
-    samples_per_pert = int(embedding_name.split("_")[4].split('-')[0])
+    samples_per_pert = int(embedding_name.split("_")[6].split('-')[0])
     print(layer, neuron, embedding_length, dropout, samples_per_pert)
 
 embeddings = pd.read_csv('../Embeddings/' + embedding_name)
@@ -91,7 +91,7 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
         print("Median Quantile:", median)
 
     results = pd.DataFrame(list(zip(imp_q, imp_q_val)), columns=['Quantile', 'Recall'])
-    
+
     if printinfo:
         display(HTML(results.to_html()))
         plt.figure(figsize=[20, 6])
@@ -99,7 +99,7 @@ def full_internal_evaluation(query_embedding, query_class, X, y, printinfo=False
         plt.ylabel("Percentage of positive perturbagens below quantile")
         plt.plot(x_values, y_values)
         plt.show()
-    
+
     auc = roc_auc_score(ordered['label'], ordered['softmax'])
 
     # Plotting AUC curve
